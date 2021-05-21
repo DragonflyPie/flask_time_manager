@@ -1,0 +1,32 @@
+{% extends "layout.html" %} {% block content %}
+<div class="content">
+  <form method="POST" action="">
+    {{ form.hidden_tag() }}
+    <fieldset>
+      <legend>Join today</legend>
+      <div class="form_group">
+        {{ form.username.label(class="form_control_label") }} {{
+        form.username(class="form_control form_control_lg") }}
+      </div>
+      <div class="form_group">
+        {{ form.email.label(class="form_control_label") }} {{
+        form.email(class="form_control form_control_lg") }}
+      </div>
+      <div class="form_group">
+        {{ form.password.label(class="form_control_label") }} {{
+        form.password(class="form_control form_control_lg") }}
+      </div>
+      <div class="form_group">
+        {{ form.confirmation.label(class="form_control_label") }} {{
+        form.confirmation(class="form_control form_control_lg") }}
+      </div>
+    </fieldset>
+    <div class="form_group">{{ form.submit(class="form_button")}}</div>
+  </form>
+</div>
+<div class="">
+  <small class="text_muted">
+    Have an account? <a href="{{ url_for('login') }}">Log in</a>
+  </small>
+</div>
+{% endblock %}
