@@ -6,9 +6,12 @@ from datetime import datetime
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 #from forms import Registration_form, Login_form
+from flask_login import LoginManager, login_manager, UserMixin, login_user, current_user, logout_user 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
+
+
 
 
 # configure app, db
@@ -16,6 +19,13 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "720e9e855f1fd7b6f91668af1c4f5f37"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///plans.db"
 db = SQLAlchemy(app)
+login_manager = LoginManager(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
@@ -41,7 +51,7 @@ class Task(db.Model):
 
 
 # user table
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     email = db.Column(db.String(60), nullable=False, unique=True)
@@ -96,6 +106,8 @@ def index():
 # register page
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
     form = Registration_form()
     if request.method == "POST" and form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
@@ -136,13 +148,16 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
     form = Login_form()
-    if form.validate_on_submit():
-        if form.email.data == '123@mail.ru' and form.password.data == 'password':
-            flash('Welcome back!', 'success')
-            return redirect(url_for('index'))
+    if request.method == "POST" and form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and check_password_hash(user.hash, form.password.data):
+            login_user(user, remember=form.remember.data)
+            return redirect(url_for("index"))
         else:
-            flash('Nope. Please check username and password', 'danger')
+            flash('Nope. Please check email and password', 'danger')
     return render_template("login.html", title="Login", form=form)
     #
     return "apology"
@@ -150,6 +165,9 @@ def login():
 
 @app.route("/logout")
 def logout():
+    logout_user()
+    return redirect(url_for("index"))
+
     return "apology"
 
 
