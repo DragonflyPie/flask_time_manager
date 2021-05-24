@@ -1,4 +1,9 @@
 {% extends "layout.html" %}
+
+{% block title %}
+Log in
+{% endblock %}
+
 {% block content %}
 <div class="content">
     <form method="POST" action="">
@@ -41,12 +46,13 @@
         </div>
         <small class="text_muted">
             <a href="#">I forgot my password :(</a>
-            <small>
+        </small>
     </form>
+    <div class="">
+        <small class="text_muted">
+            Don't have an account yet? <a href="{{ url_for('register') }}">Register now</a>
+        </small>
+    </div>
 </div>
-<div class="">
-    <small class="text_muted">
-        Don't have an account yet? <a href="{{ url_for('register') }}">Register now</a>
-    </small>
-</div>
+
 {% endblock %}

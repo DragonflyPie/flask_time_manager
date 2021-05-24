@@ -6,9 +6,11 @@ from datetime import datetime
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 #from forms import Registration_form, Login_form
-from flask_login import LoginManager, login_manager, UserMixin, login_user, current_user, logout_user 
+from flask_login import LoginManager, login_manager, UserMixin, login_user, current_user, logout_user, login_required
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField
+from wtforms import validators
+from wtforms.fields.simple import TextAreaField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 
 
@@ -20,6 +22,8 @@ app.config["SECRET_KEY"] = "720e9e855f1fd7b6f91668af1c4f5f37"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///plans.db"
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message_category = 'info' #class for flash
 
 
 @login_manager.user_loader
@@ -66,8 +70,8 @@ class Registration_form(FlaskForm):
     username = StringField(
         "Username", validators=[DataRequired(), Length(min=1, max=20)]
     )
-    email = StringField("Email", validators=[DataRequired(), Email()])
-    password = PasswordField("Password", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired(), Email('This e-mail adress is not valid')])
+    password = PasswordField("Password", validators=[DataRequired(), ])
     confirmation = PasswordField(
         "Confirmation", validators=[DataRequired(), EqualTo("password")]
     )
@@ -92,6 +96,10 @@ class Login_form(FlaskForm):
     remember = BooleanField("Remember Me")
     submit = SubmitField("Login")
 
+
+class Objective_form(FlaskForm):
+    content = TextAreaField("New_task", validators=[DataRequired("Doing nothing is not a plan!")])
+    submit = SubmitField("Add")
 
 def apology(message, code=400):
     return render_template("apology.html", message=message, code=code), code
@@ -155,12 +163,12 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and check_password_hash(user.hash, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for("index"))
+            next_page = request.args.get('next')
+            return redirect (next_page) if next_page else redirect(url_for("index"))
         else:
             flash('Nope. Please check email and password', 'danger')
     return render_template("login.html", title="Login", form=form)
-    #
-    return "apology"
+
 
 
 @app.route("/logout")
@@ -168,26 +176,34 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
-    return "apology"
 
-
-@app.route("/new")
-def new():
-    return ""
+@app.route("/new", methods=["GET", "POST"])
+@login_required
+def new_object():
+    form = Objective_form()
+    if request.method == 'POST' and form.validate_on_submit():
+        flash('New objective is set', 'success')
+        return redirect(url_for('index'))
+    else:
+        return render_template('new.html', title = 'New objective', form=form)
 
 
 @app.route("/update")
+@login_required
 def update():
     return ""
 
 
 @app.route("/lookup")
+@login_required
 def lookup():
     pass
 
 
 @app.route("/settings")
+@login_required
 def settings():
+    return render_template("settings.html", title="Account settings")
     pass
 
 

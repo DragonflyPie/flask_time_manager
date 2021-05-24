@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+New objective
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <fieldset>
+            <legend>What are we going to do?</legend>
+            <div class="form_group">
+                {{ form.content.label(class="form_control_label") }}
+                {% if form.content.errors %}
+                {{ form.content(class="form_contorl form_control_lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.content.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {{ form.content(class="new_task") }}
+                {% endif %}
+            </div>
+        </fieldset>
+        <div class="form_group">
+            {{ form.submit(class="form_button")}}
+        </div>
+    </form>
+</div>
+{% endblock %}

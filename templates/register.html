@@ -1,4 +1,9 @@
 {% extends "layout.html" %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
 {% block content %}
 <div class="content">
     <form method="POST" action="">
@@ -63,10 +68,10 @@
             {{ form.submit(class="form_button")}}
         </div>
     </form>
-</div>
-<div class="">
-    <small class="text_muted">
-        Have an account? <a href="{{ url_for('login') }}">Log in</a>
-    </small>
+    <div class="">
+        <small class="text_muted">
+            Have an account? <a href="{{ url_for('login') }}">Log in</a>
+        </small>
+    </div>
 </div>
 {% endblock %}
