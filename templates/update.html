@@ -1,9 +1,7 @@
 {% extends "layout.html" %}
-
 {% block title %}
 New objective
 {% endblock %}
-
 {% block content %}
 <div class="content">
     <form method="POST" action="" novalidate>
@@ -20,12 +18,12 @@ New objective
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.content(class="new_task") }}
+                {{ form.content(class="Update") }}
                 {% endif %}
             </div>
         </fieldset>
         <div class="form_group">
-            {{ form.submit(class="form_button")}}
+            {{ form.submit(class="form_button") }}
         </div>
     </form>
 </div>

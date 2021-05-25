@@ -1,5 +1,5 @@
 from enum import unique
-from flask import Flask, redirect, render_template, request, flash, url_for
+from flask import Flask, redirect, render_template, request, flash, url_for, abort
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
 from datetime import datetime
@@ -35,24 +35,6 @@ def load_user(user_id):
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 
-# configure session (TODO)??
-
-
-# task table
-class Task(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(10), nullable=False, default="ToDo")
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    deadline = db.Column(db.DateTime)
-    time = db.Column(db.DateTime)
-    duration = db.Column(db.Integer)
-    parent_id = db.Column(db.Integer, db.ForeignKey('task.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-
-    def __repr__(self):
-        return f"Task('{self.id}', '{self.user_id}', '{self.type}', {self.content}')"
-
 
 # user table
 class User(db.Model, UserMixin):
@@ -64,6 +46,38 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
+
+# task table
+class Task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(10), nullable=False, default="ToDo")
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    time = db.Column(db.DateTime)
+    duration = db.Column(db.Integer)
+    parent_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    done = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f"Task('{self.id}', '{self.user_id}', '{self.type}', {self.content}', {self.done})"
+
+
+class Sub_task(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    type = db.Column(db.String(10), nullable=False, default="ToDo")
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    time = db.Column(db.DateTime)
+    duration = db.Column(db.Integer)
+    parent_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    done = db.Column(db.Boolean, nullable=False, default=False)
+
+    def __repr__(self):
+        return f"Task('{self.id}', '{self.user_id}', '{self.type}', {self.content}', {self.done})"
+
+
 
 
 class Registration_form(FlaskForm):
@@ -98,17 +112,23 @@ class Login_form(FlaskForm):
 
 
 class Objective_form(FlaskForm):
-    content = TextAreaField("New_task", validators=[DataRequired("Doing nothing is not a plan!")])
+    content = TextAreaField("Objective", validators=[DataRequired("Doing nothing is not a plan!")])
     submit = SubmitField("Add")
 
 def apology(message, code=400):
     return render_template("apology.html", message=message, code=code), code
 
+@app.route("/welcome")
+def welcome():
+    return render_template('welcome.html')
 
 # index page
 @app.route("/")
 def index():
-    return render_template("index.html")
+    if not current_user.is_authenticated:
+        return redirect(url_for("welcome"))
+    tasks = Task.query.filter_by(user_id=current_user.id)
+    return render_template("index.html", tasks=tasks)
 
 
 # register page
@@ -182,16 +202,41 @@ def logout():
 def new_object():
     form = Objective_form()
     if request.method == 'POST' and form.validate_on_submit():
+        task = Task(content = form.content.data, user=current_user)
+        db.session.add(task)
+        db.session.commit()
         flash('New objective is set', 'success')
         return redirect(url_for('index'))
     else:
-        return render_template('new.html', title = 'New objective', form=form)
+        return render_template('new.html', title = "New objective", form=form, legend="What are we going to do?")
 
-
-@app.route("/update")
+@app.route("/update/<int:task_id>", methods=["GET", "POST"])
 @login_required
-def update():
-    return ""
+def update(task_id):
+    form = Objective_form()
+    task = Task.query.get_or_404(task_id)
+    if task.user != current_user:
+        abort(403)
+    if request.method == "POST" and form.validate_on_submit():
+        task.content = form.content.data
+        db.session.commit()
+        flash('Objective updated', 'success')
+        return redirect(url_for('index'))
+    else:
+        form.content.data = task.content
+        return render_template('update.html', title = "Update", task=task, form=form, legend="Update task")
+
+
+@app.route("/delete/<int:task_id>", methods=["POST"])
+@login_required
+def delete(task_id):
+    task = Task.query.get_or_404(task_id)
+    if task.user != current_user:
+        abort(403)
+    db.session.delete(task)
+    db.session.commit()
+    flash('Objective deleted', 'success')
+    return redirect(url_for('index'))
 
 
 @app.route("/lookup")
@@ -204,7 +249,6 @@ def lookup():
 @login_required
 def settings():
     return render_template("settings.html", title="Account settings")
-    pass
 
 
 @app.route("/apology")
