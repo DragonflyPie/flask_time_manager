@@ -8,7 +8,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 #from forms import Registration_form, Login_form
 from flask_login import LoginManager, login_manager, UserMixin, login_user, current_user, logout_user, login_required
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField, DateTimeField
 from wtforms import validators
 from wtforms.fields.simple import TextAreaField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
@@ -63,7 +63,6 @@ class Task(db.Model):
         return f"Task('{self.id}', '{self.user_id}', '{self.type}', {self.content}', {self.done})"
 
 
-class Sub_task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
     type = db.Column(db.String(10), nullable=False, default="ToDo")
@@ -78,12 +77,8 @@ class Sub_task(db.Model):
         return f"Task('{self.id}', '{self.user_id}', '{self.type}', {self.content}', {self.done})"
 
 
-
-
 class Registration_form(FlaskForm):
-    username = StringField(
-        "Username", validators=[DataRequired(), Length(min=1, max=20)]
-    )
+    username = StringField("Username", validators=[DataRequired(), Length(min=1, max=20)])
     email = StringField("Email", validators=[DataRequired(), Email('This e-mail adress is not valid')])
     password = PasswordField("Password", validators=[DataRequired(), ])
     confirmation = PasswordField(
@@ -92,13 +87,12 @@ class Registration_form(FlaskForm):
     submit = SubmitField("Sign Up")
 
     def validate_username(self, username):
-
         user = User.query.filter_by(username=username.data).first()
         if user:
             raise ValidationError("This username already exists.")
 
-    def validate_email(self, email):
 
+    def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError("This email is already in use by existing user.")
@@ -113,6 +107,7 @@ class Login_form(FlaskForm):
 
 class Objective_form(FlaskForm):
     content = TextAreaField("Objective", validators=[DataRequired("Doing nothing is not a plan!")])
+    type = RadioField("Type", choices=[('1', 'Task'), ('2', 'Routine'), ('3', 'Goal')], default = '1')
     submit = SubmitField("Add")
 
 def apology(message, code=400):

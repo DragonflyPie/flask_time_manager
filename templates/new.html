@@ -23,6 +23,24 @@ New objective
                 {{ form.content(class="new_task") }}
                 {% endif %}
             </div>
+            <div class="form_group">
+                {{ form.type.label(class="form_control_label") }}
+                {% if form.type.errors %}
+                {{ form.type(class="form_control form_control_lg is-invalid") }}
+                <div class="invalid-feedback">
+                    {% for error in form.type.errors %}
+                    <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                {% for subfield in form.type %}
+                <tr>
+                    <td>{{ subfield.label }}</td>
+                    <td>{{ subfield }}</td>
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </div>
         </fieldset>
         <div class="form_group">
             {{ form.submit(class="form_button")}}
