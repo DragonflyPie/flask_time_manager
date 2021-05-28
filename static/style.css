@@ -69,11 +69,6 @@ main {
   align-items: center;
 }
 
-.new_task {
-  width: 40%;
-  height: 100px;
-}
-
 .content {
   display: flex;
   flex-direction: column;
@@ -86,4 +81,9 @@ main {
   display: flex;
   flex-direction: column;
   width: 100%;
+}
+
+.checkboxes_inline {
+  display: flex;
+  flex-direction: row;
 }
