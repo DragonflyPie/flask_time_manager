@@ -41,31 +41,8 @@ New objective
                 {% endfor %}
                 {% endif %}
             </div>
-            <div class="form_group">
-                {{ form.datetime.label(class="form_control_label") }}
-                {% if form.datetime.errors %}
-                {{ form.datetime(class="form_control form_control_lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.datetime.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.datetime(class="new_task") }}
-                {% endif %}
-            </div>
-            <div class="form_group">
-                {{ form.duration.label(class="form_control_label") }}
-                {% if form.duration.errors %}
-                {{ form.duration(class="form_control form_control_lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.duration.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
-                </div>
-                {% else %}
-                {{ form.duration(class="new_task") }}
-                {% endif %}
+            <div>
+                <input type='text' name='datetime' class="flatpickr" placeholder='select date and time'>
             </div>
         </fieldset>
         <fieldset class=checkboxes_inline>
@@ -101,8 +78,6 @@ New objective
         <div class="form_group">
             {{ form.submit(class="form_button")}}
         </div>
-
-
     </form>
 </div>
 {% endblock %}

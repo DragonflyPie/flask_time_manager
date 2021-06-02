@@ -82,8 +82,3 @@ main {
   flex-direction: column;
   width: 100%;
 }
-
-.checkboxes_inline {
-  display: flex;
-  flex-direction: row;
-}

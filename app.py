@@ -1,5 +1,7 @@
 from enum import unique
-from flask import Flask, redirect, render_template, request, flash, url_for, abort
+from re import A
+from flask import Flask, redirect, render_template, request, flash, url_for, abort, jsonify
+from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
 from datetime import datetime, timezone
@@ -8,8 +10,8 @@ from werkzeug.security import check_password_hash, generate_password_hash
 #from forms import Registration_form, Login_form
 from flask_login import LoginManager, login_manager, UserMixin, login_user, current_user, logout_user, login_required
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField, DateTimeField, DecimalField, TextAreaField, IntegerField, SelectMultipleField
-from wtforms.fields.html5 import DateField, DateTimeLocalField
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField, DecimalField, TextAreaField, IntegerField, SelectMultipleField
+from wtforms.fields.html5 import DateField, TimeField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, NumberRange, Optional
 
 
@@ -51,29 +53,21 @@ class Task(db.Model):
     content = db.Column(db.Text, nullable=False)
     type = db.Column(db.String(10), nullable=False, default="ToDo")
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    time = db.Column(db.DateTime)
+    datetime = db.Column(db.DateTime)
     duration = db.Column(db.Integer)
     parent_id = db.Column(db.Integer, db.ForeignKey('task.id'))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     done = db.Column(db.Boolean, nullable=False, default=False)
+    monday = db.Column(db.Boolean)
+    tuesday = db.Column(db.Boolean)
+    wednesday = db.Column(db.Boolean)
+    thursday = db.Column(db.Boolean)
+    friday = db.Column(db.Boolean)
+    saturday = db.Column(db.Boolean)
+    sunday = db.Column(db.Boolean)
 
     def __repr__(self):
         return f"Task('{self.id}', '{self.user_id}', '{self.type}', {self.content}', {self.done})"
-
-
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(10), nullable=False, default="ToDo")
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    time = db.Column(db.DateTime)
-    duration = db.Column(db.Integer)
-    parent_id = db.Column(db.Integer, db.ForeignKey('task.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    done = db.Column(db.Boolean, nullable=False, default=False)
-
-    def __repr__(self):
-        return f"Task('{self.id}', '{self.user_id}', '{self.type}', {self.content}', {self.done})"
-
 
 class Registration_form(FlaskForm):
     username = StringField("Username", validators=[DataRequired(), Length(min=1, max=20)])
@@ -106,13 +100,7 @@ class Login_form(FlaskForm):
 class Objective_form(FlaskForm):
     content = TextAreaField("Objective", validators=[DataRequired("Doing nothing is not a plan!")])
     type = RadioField("Type", choices=[('1', 'Task'), ('2', 'Routine'), ('3', 'Goal')], default = '1')
-    datetime = DateTimeLocalField("Date and time", format='%Y-%m-%d %H:%M', validators=[Optional()])
-    duration = IntegerField("Duration", validators=[Optional(), NumberRange(min=1, max=300)])
-    dayofweek = SelectMultipleField("Day of week", choices=[(1, 'Monday'), (2, 'Tuesday'), (3,'Wednesday'), (4,'Thursday'), (5,'Friday'), (6,'Saturday'), (7,'Sunday')])
-    submit = SubmitField("Add")
-    # parent_id = db.Column(db.Integer, db.ForeignKey('task.id'))
-    # user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
-    # done = db.Column(db.Boolean, nullable=False, default=False)
+    submit = SubmitField("Submit new objective")
 
 def apology(message, code=400):
     return render_template("apology.html", message=message, code=code), code
@@ -122,12 +110,14 @@ def welcome():
     return render_template('welcome.html')
 
 # index page
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
     if not current_user.is_authenticated:
         return redirect(url_for("welcome"))
-    tasks = Task.query.filter_by(user_id=current_user.id)
-    return render_template("index.html", tasks=tasks)
+    tasks = Task.query.filter_by(user_id=current_user.id, parent_id = None)
+    subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id)
+                   
+    return render_template("index.html", tasks=tasks, subtasks=subtasks)
 
 
 # register page
@@ -201,7 +191,14 @@ def logout():
 def new_object():
     form = Objective_form()
     if request.method == 'POST' and form.validate_on_submit():
-        task = Task(content = form.content.data, user=current_user)
+        if request.form["datetime"] != "":
+            timestamp = int(request.form["datetime"])
+            objective_time = datetime.fromtimestamp(timestamp)
+        else:
+            objective_time = None
+        task = Task(content = form.content.data, type = form.type.data, user=current_user, datetime=objective_time)
+        if form.type.data == "routine":
+            task.monday = True
         db.session.add(task)
         db.session.commit()
         flash('New objective is set', 'success')
@@ -209,20 +206,51 @@ def new_object():
     else:
         return render_template('new.html', title = "New objective", form=form, legend="What are we going to do?")
 
+
+@app.route("/add/<int:task_id>", methods=["GET", "POST"])
+@login_required
+def new_subobjective(task_id):
+    form = Objective_form()
+    parent_objective = Task.query.get_or_404(task_id)
+    if request.method == 'POST' and form.validate_on_submit():
+        task = Task(content = form.content.data, user=current_user, parent_id = task_id)
+        db.session.add(task)
+        db.session.commit()
+        flash('New objective is set', 'success')
+        return redirect(url_for('index'))
+    else:
+        return render_template('add.html', title = "New subobjective", form=form, legend="What are we going to do?", parent_objective = parent_objective)
+
+
+@app.route("/done/<int:task_id>", methods =["POST"])
+@login_required
+def done(task_id):
+    task = Task.query.get_or_404(task_id)
+    if task.user != current_user:
+        abort(403)
+    task.done = True
+    db.session.commit()
+    flash('Done', 'success')
+    return redirect(url_for('index'))
+
+
 @app.route("/update/<int:task_id>", methods=["GET", "POST"])
 @login_required
 def update(task_id):
-    form = Objective_form()
+    form = Objective_form()    
     task = Task.query.get_or_404(task_id)
+    
     if task.user != current_user:
         abort(403)
     if request.method == "POST" and form.validate_on_submit():
         task.content = form.content.data
+        task.type = form.type.data
         db.session.commit()
         flash('Objective updated', 'success')
         return redirect(url_for('index'))
     else:
         form.content.data = task.content
+        form.type.data = task.type
         return render_template('update.html', title = "Update", task=task, form=form, legend="Update task")
 
 

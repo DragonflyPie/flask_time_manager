@@ -1,8 +1,13 @@
 {% extends "layout.html" %}
+
 {% block title %}
-Update objective
+New objective
 {% endblock %}
+
 {% block content %}
+<div class="parent_objective">
+    <h4>Parent objective:{{ parent_objective.content }}<h4>
+</div>
 <div class="content">
     <form method="POST" action="" novalidate>
         {{ form.hidden_tag() }}
@@ -40,7 +45,7 @@ Update objective
                 {% endif %}
             </div>
             <div>
-                <input type='text' name='datetime' class="flatpickr" placeholder='{{ task.datetime }}'>
+                <input type='text' name='datetime' class="flatpickr" placeholder='select date and time'>
             </div>
         </fieldset>
         <fieldset class=checkboxes_inline>
