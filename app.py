@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, request, flash, url_for, abo
 from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 #from forms import Registration_form, Login_form
@@ -13,6 +13,8 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField, DecimalField, TextAreaField, IntegerField, SelectMultipleField
 from wtforms.fields.html5 import DateField, TimeField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, NumberRange, Optional
+from sqlalchemy import func
+from datetime import date
 
 
 
@@ -112,12 +114,45 @@ def welcome():
 # index page
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if not current_user.is_authenticated:
-        return redirect(url_for("welcome"))
-    tasks = Task.query.filter_by(user_id=current_user.id, parent_id = None)
-    subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id)
-                   
-    return render_template("index.html", tasks=tasks, subtasks=subtasks)
+    if request.method == "POST":
+        searchdate = request.form["datepicker"]
+        return redirect(url_for("lookup", searchdate=searchdate))
+    else:
+        if not current_user.is_authenticated:
+            return redirect(url_for("welcome"))
+        tasks = Task.query.filter_by(user_id=current_user.id, parent_id = None)
+        subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id)
+                    
+        return render_template("index.html", tasks=tasks, subtasks=subtasks)
+
+@app.route("/lookup/<searchdate>", methods=["GET", "POST"])
+@login_required
+def lookup(searchdate):
+    if request.method == "POST":
+        searchdate = request.form["datepicker"]
+        return redirect(url_for("lookup", searchdate=searchdate))
+    else:
+        week_int = datetime.fromtimestamp(int(searchdate)).strftime("%w")
+        def dayofweek(i):
+            switcher={
+                0:'Sunday',
+                1:'Monday',
+                2:'Tuesday',
+                3:'Wednesday',
+                4:'Thursday',
+                5:'Friday',
+                6:'Saturday'
+            }
+            return switcher.get(i)
+        day = (dayofweek(week_int))
+
+        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None).filter(func.date(Task.datetime) == searchdate)
+        subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id).filter((func.date(Task.datetime)) == searchdate)
+        routines = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None).filter(Task.day} == True)
+        subroutines = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id).filter(Task.datetime.strftime("w") == searchdate.strftime("w"))
+        return render_template("lookup.html", tasks=tasks, subtasks=subtasks, routines=routines, subroutines=subroutines)
+
+
 
 
 # register page
@@ -136,31 +171,6 @@ def register():
         )
         return redirect(url_for("login"))
     return render_template("register.html", title="Register", form=form)
-
-
-#     if request.method == "GET":
-#         return render_template("register.html")
-
-#     else:
-#         username = request.form.get("username")
-#         email = request.form.get("email")
-#         password = request.form.get("password")
-#         confirmation = request.form.get("password")
-
-#         hash = generate_password_hash(password)
-
-#         new_user = user(username=username, email=email, hash=hash)
-
-#         try:
-#             db.session.add(new_user)
-#             db.session.commit()
-#             return redirect("/")
-#         except:
-#             return apology("Something went wrong, user is not registered ;(", 500)
-
-#         # check
-
-#         return "apology"
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -266,10 +276,7 @@ def delete(task_id):
     return redirect(url_for('index'))
 
 
-@app.route("/lookup")
-@login_required
-def lookup():
-    pass
+
 
 
 @app.route("/settings")

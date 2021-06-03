@@ -1,4 +1,4 @@
-const tararam = flatpickr(".flatpickr", {
+flatpickr(".flatpickr", {
   altInput: true,
   enableTime: true,
   time_24hr: true,
@@ -6,4 +6,12 @@ const tararam = flatpickr(".flatpickr", {
   dateFormat: "U",
   minDate: "today",
   defaultDate: null,
+});
+
+flatpickr(".flatpickr2", {
+  defaultDate: null,
+  dateFormat: "U",
+  onChange: function (selectedDates, dateStr, instance) {
+    $("#datepicker").submit();
+  },
 });
