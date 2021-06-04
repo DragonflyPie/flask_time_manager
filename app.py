@@ -101,7 +101,14 @@ class Login_form(FlaskForm):
 
 class Objective_form(FlaskForm):
     content = TextAreaField("Objective", validators=[DataRequired("Doing nothing is not a plan!")])
-    type = RadioField("Type", choices=[('1', 'Task'), ('2', 'Routine'), ('3', 'Goal')], default = '1')
+    type = RadioField("Type", choices=[('task', 'Task'), ('routine', 'Routine'), ('goal', 'Goal')], default = 'task')
+    monday = BooleanField("Monday")
+    tuesday = BooleanField("Tuesday")
+    wednesday = BooleanField("Wednesday")
+    thursday = BooleanField("Thursday")
+    friday = BooleanField("Friday")
+    saturday = BooleanField("Saturday")
+    sunday = BooleanField("Sunday")
     submit = SubmitField("Submit new objective")
 
 def apology(message, code=400):
@@ -132,24 +139,24 @@ def lookup(searchdate):
         searchdate = request.form["datepicker"]
         return redirect(url_for("lookup", searchdate=searchdate))
     else:
-        week_int = datetime.fromtimestamp(int(searchdate)).strftime("%w")
+        week_int = int(datetime.fromtimestamp(int(searchdate)).strftime("%w"))
         def dayofweek(i):
             switcher={
-                0:'Sunday',
-                1:'Monday',
-                2:'Tuesday',
-                3:'Wednesday',
-                4:'Thursday',
-                5:'Friday',
-                6:'Saturday'
+                0:'sunday',
+                1:'monday',
+                2:'tuesday',
+                3:'wednesday',
+                4:'thursday',
+                5:'friday',
+                6:'saturday'
             }
             return switcher.get(i)
         day = (dayofweek(week_int))
 
         tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None).filter(func.date(Task.datetime) == searchdate)
         subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id).filter((func.date(Task.datetime)) == searchdate)
-        routines = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None).filter(Task.day} == True)
-        subroutines = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id).filter(Task.datetime.strftime("w") == searchdate.strftime("w"))
+        routines = Task.query.filter(Task.user_id == current_user.id, Task.parent_id == None).filter(getattr(Task, day) == True)
+        subroutines = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id).filter(getattr(Task, day) == True)
         return render_template("lookup.html", tasks=tasks, subtasks=subtasks, routines=routines, subroutines=subroutines)
 
 
@@ -207,8 +214,14 @@ def new_object():
         else:
             objective_time = None
         task = Task(content = form.content.data, type = form.type.data, user=current_user, datetime=objective_time)
-        if form.type.data == "routine":
-            task.monday = True
+        if task.type == "routine":
+            task.monday = form.monday.data
+            task.tuesday = form.tuesday.data
+            task.wednesday = form.wednesday.data
+            task.thursday = form.thursday.data
+            task.friday = form.friday.data
+            task.saturday = form.saturday.data
+            task.sunday = form.sunday.data
         db.session.add(task)
         db.session.commit()
         flash('New objective is set', 'success')
