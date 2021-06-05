@@ -5,6 +5,7 @@ New objective
 {% endblock %}
 
 {% block content %}
+<h4>{{ parent_objective.content }}</h4>
 <div class="content">
     <form method="POST" action="" novalidate>
         {{ form.hidden_tag() }}

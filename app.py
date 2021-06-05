@@ -53,7 +53,7 @@ class User(db.Model, UserMixin):
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(10), nullable=False, default="ToDo")
+    type = db.Column(db.String(10), nullable=False, default="task")
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     datetime = db.Column(db.DateTime)
     duration = db.Column(db.Integer)
@@ -139,6 +139,7 @@ def lookup(searchdate):
         searchdate = request.form["datepicker"]
         return redirect(url_for("lookup", searchdate=searchdate))
     else:
+        date_dateformat = func.date(datetime.fromtimestamp(int(searchdate)))
         week_int = int(datetime.fromtimestamp(int(searchdate)).strftime("%w"))
         def dayofweek(i):
             switcher={
@@ -153,8 +154,8 @@ def lookup(searchdate):
             return switcher.get(i)
         day = (dayofweek(week_int))
 
-        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None).filter(func.date(Task.datetime) == searchdate)
-        subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id).filter((func.date(Task.datetime)) == searchdate)
+        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None).filter(func.date(Task.datetime) == date_dateformat)
+        subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id)
         routines = Task.query.filter(Task.user_id == current_user.id, Task.parent_id == None).filter(getattr(Task, day) == True)
         subroutines = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id).filter(getattr(Task, day) == True)
         return render_template("lookup.html", tasks=tasks, subtasks=subtasks, routines=routines, subroutines=subroutines)
@@ -208,13 +209,15 @@ def logout():
 def new_object():
     form = Objective_form()
     if request.method == 'POST' and form.validate_on_submit():
-        if request.form["datetime"] != "":
-            timestamp = int(request.form["datetime"])
-            objective_time = datetime.fromtimestamp(timestamp)
+        task = Task(content = form.content.data, type = form.type.data, user=current_user)
+        if task.type != "routine":
+            if request.form["datetime"] != "":
+                timestamp = int(request.form["datetime"])
+                objective_time = datetime.fromtimestamp(timestamp)
+            else:
+                objective_time = None
+            task.datetime = objective_time
         else:
-            objective_time = None
-        task = Task(content = form.content.data, type = form.type.data, user=current_user, datetime=objective_time)
-        if task.type == "routine":
             task.monday = form.monday.data
             task.tuesday = form.tuesday.data
             task.wednesday = form.wednesday.data
@@ -227,7 +230,7 @@ def new_object():
         flash('New objective is set', 'success')
         return redirect(url_for('index'))
     else:
-        return render_template('new.html', title = "New objective", form=form, legend="What are we going to do?")
+        return render_template('new.html', title = "New objective", form=form, legend="What are we going to do?", parent_objective = None)
 
 
 @app.route("/add/<int:task_id>", methods=["GET", "POST"])
@@ -236,13 +239,28 @@ def new_subobjective(task_id):
     form = Objective_form()
     parent_objective = Task.query.get_or_404(task_id)
     if request.method == 'POST' and form.validate_on_submit():
-        task = Task(content = form.content.data, user=current_user, parent_id = task_id)
+        task = Task(content = form.content.data, type = form.type.data, user=current_user, parent_id = task_id)
+        if task.type != "routine":
+            if request.form["datetime"] != "":
+                timestamp = int(request.form["datetime"])
+                objective_time = datetime.fromtimestamp(timestamp)
+            else:
+                objective_time = None
+            task.datetime = objective_time
+        else:
+            task.monday = form.monday.data
+            task.tuesday = form.tuesday.data
+            task.wednesday = form.wednesday.data
+            task.thursday = form.thursday.data
+            task.friday = form.friday.data
+            task.saturday = form.saturday.data
+            task.sunday = form.sunday.data
         db.session.add(task)
         db.session.commit()
-        flash('New objective is set', 'success')
+        flash('New subobjective is set', 'success')
         return redirect(url_for('index'))
     else:
-        return render_template('add.html', title = "New subobjective", form=form, legend="What are we going to do?", parent_objective = parent_objective)
+        return render_template('new.html', title = "New subobjective", form=form, legend="What are we going to do?", parent_objective = parent_objective)
 
 
 @app.route("/done/<int:task_id>", methods =["POST"])

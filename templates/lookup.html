@@ -8,8 +8,12 @@ Task manager
 <form action="" method="POST" id="datepicker">
     <input type='text' name='datepicker' class="flatpickr2" placeholder='select date' required>
 </form>
+
 {% for task in tasks %}
 {{ task }}
+
+
+
 <a href="{{ url_for('update', task_id = task.id) }}"><button class="btn btn-btn">Update</button></a>
 <a href="{{ url_for('new_subobjective', task_id = task.id) }}"><button class="btn btn-btn">Subobjective</button></a>
 <form action="{{ url_for('done', task_id = task.id) }}" method="POST">
@@ -34,10 +38,12 @@ Task manager
         </div>
     </div>
 </div>
+{% for subtask in subtasks %}
+{% if subtask.parent_id == task.id %}
+
 <div>
-    {% for subtask in subtasks %}
-    {% if subtask.parent_id == task.id %}
     {{ subtask }}
+    {{ subtask.datetime }}
     <a href="{{ url_for('update', task_id = subtask.id) }}"><button class="btn btn-btn">Update</button></a>
     <a href="{{ url_for('new_subobjective', task_id = subtask.id) }}"><button
             class="btn btn-btn">Subobjective</button></a>
@@ -63,12 +69,11 @@ Task manager
             </div>
         </div>
     </div>
-    <div>
-        {% endif %}
-        {% endfor %}
-    </div>
-
-    {% endfor %}
+</div>
+{% endif %}
+{% endfor %}
+{% endfor %}
+<div>
     {% for routine in routines %}
     {{ routine }}
     {% endfor %}
