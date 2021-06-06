@@ -57,7 +57,7 @@ class Task(db.Model):
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     datetime = db.Column(db.DateTime)
     duration = db.Column(db.Integer)
-    parent_id = db.Column(db.Integer, db.ForeignKey('task.id'))
+    parent_id = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     done = db.Column(db.Boolean, nullable=False, default=False)
     monday = db.Column(db.Boolean)
@@ -101,14 +101,14 @@ class Login_form(FlaskForm):
 
 class Objective_form(FlaskForm):
     content = TextAreaField("Objective", validators=[DataRequired("Doing nothing is not a plan!")])
-    type = RadioField("Type", choices=[('task', 'Task'), ('routine', 'Routine'), ('goal', 'Goal')], default = 'task')
-    monday = BooleanField("Monday")
-    tuesday = BooleanField("Tuesday")
-    wednesday = BooleanField("Wednesday")
-    thursday = BooleanField("Thursday")
-    friday = BooleanField("Friday")
-    saturday = BooleanField("Saturday")
-    sunday = BooleanField("Sunday")
+    type = RadioField("Type", id = "radioweek", choices=[('task', 'Task'), ('routine', 'Routine'), ('goal', 'Goal')], default = 'task')
+    monday = BooleanField("Monday", default="checked")
+    tuesday = BooleanField("Tuesday", default="checked")
+    wednesday = BooleanField("Wednesday", default="checked")
+    thursday = BooleanField("Thursday", default="checked")
+    friday = BooleanField("Friday", default="checked")
+    saturday = BooleanField("Saturday", default="checked")
+    sunday = BooleanField("Sunday", default="checked")
     submit = SubmitField("Submit new objective")
 
 def apology(message, code=400):
@@ -121,12 +121,15 @@ def welcome():
 # index page
 @app.route("/", methods=["GET", "POST"])
 def index():
+    today = date.today()
+    return redirect (url_for("lookup", searchdate = today))
     if request.method == "POST":
         searchdate = request.form["datepicker"]
         return redirect(url_for("lookup", searchdate=searchdate))
     else:
         if not current_user.is_authenticated:
             return redirect(url_for("welcome"))
+        today = date.today()
         tasks = Task.query.filter_by(user_id=current_user.id, parent_id = None)
         subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id)
                     
@@ -139,26 +142,26 @@ def lookup(searchdate):
         searchdate = request.form["datepicker"]
         return redirect(url_for("lookup", searchdate=searchdate))
     else:
-        date_dateformat = func.date(datetime.fromtimestamp(int(searchdate)))
-        week_int = int(datetime.fromtimestamp(int(searchdate)).strftime("%w"))
+        date_dateformat = datetime.strptime(searchdate, "%Y-%m-%d").date()
+        week_int = date_dateformat.weekday()
         def dayofweek(i):
             switcher={
-                0:'sunday',
-                1:'monday',
-                2:'tuesday',
-                3:'wednesday',
-                4:'thursday',
-                5:'friday',
-                6:'saturday'
+                0:'monday',
+                1:'tuesday',
+                2:'wednesday',
+                3:'thursday',
+                4:'friday',
+                5:'saturday',
+                6:'sunday',
             }
             return switcher.get(i)
         day = (dayofweek(week_int))
 
-        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None).filter(func.date(Task.datetime) == date_dateformat)
-        subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id)
-        routines = Task.query.filter(Task.user_id == current_user.id, Task.parent_id == None).filter(getattr(Task, day) == True)
-        subroutines = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id).filter(getattr(Task, day) == True)
-        return render_template("lookup.html", tasks=tasks, subtasks=subtasks, routines=routines, subroutines=subroutines)
+        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.type == "task", Task.done == False).filter(func.date(Task.datetime) == date_dateformat)
+        subtasks = Task.query.filter(Task.parent_id != None, Task.type == "task").filter_by(user_id=current_user.id)
+        goals = Task.query.filter(Task.user_id==current_user.id, Task.type == "goal", Task.done == False).filter(func.date(Task.datetime) >= date_dateformat)
+        routines = Task.query.filter(Task.user_id == current_user.id).filter(getattr(Task, day) == True)
+        return render_template("lookup.html", tasks=tasks, subtasks=subtasks, routines=routines, goals=goals, date_dateformat=date_dateformat)
 
 
 
@@ -280,19 +283,35 @@ def done(task_id):
 def update(task_id):
     form = Objective_form()    
     task = Task.query.get_or_404(task_id)
+    parent_task = Task.query.get(task.parent_id)
     
     if task.user != current_user:
         abort(403)
     if request.method == "POST" and form.validate_on_submit():
         task.content = form.content.data
-        task.type = form.type.data
+        task.type = form.type.data  
+        if task.type != "routine":
+            if request.form["datetime"] != "":
+                timestamp = int(request.form["datetime"])
+                objective_time = datetime.fromtimestamp(timestamp)
+            else:
+                objective_time = None
+            task.datetime = objective_time
+        else:
+            task.monday = form.monday.data
+            task.tuesday = form.tuesday.data
+            task.wednesday = form.wednesday.data
+            task.thursday = form.thursday.data
+            task.friday = form.friday.data
+            task.saturday = form.saturday.data
+            task.sunday = form.sunday.data
         db.session.commit()
         flash('Objective updated', 'success')
         return redirect(url_for('index'))
     else:
         form.content.data = task.content
         form.type.data = task.type
-        return render_template('update.html', title = "Update", task=task, form=form, legend="Update task")
+        return render_template('update.html', title = "Update", task=task, form=form, legend="Update task", parent_task= parent_task)
 
 
 @app.route("/delete/<int:task_id>", methods=["POST"])
@@ -305,9 +324,6 @@ def delete(task_id):
     db.session.commit()
     flash('Objective deleted', 'success')
     return redirect(url_for('index'))
-
-
-
 
 
 @app.route("/settings")

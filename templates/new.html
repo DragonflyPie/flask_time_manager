@@ -24,7 +24,7 @@ New objective
                 {{ form.content(class="new_task") }}
                 {% endif %}
             </div>
-            <div class="form_list">
+            <div class="form_list" id="radioweeek">
                 {{ form.type.label(class="form_control_label") }}
                 {% if form.type.errors %}
                 {{ form.type(class="form_control form_control_lg is-invalid") }}
@@ -46,7 +46,7 @@ New objective
                 <input type='text' name='datetime' class="flatpickr" placeholder='select date and time'>
             </div>
         </fieldset>
-        <fieldset class=checkboxes_inline>
+        <fieldset class=checkboxes_inline id=week_checkbox style="display:none">
             <div class="form-check">
                 {{ form.monday(class="form-check-input")}}
                 {{ form.monday.label(class="form-check-label")}}
@@ -81,4 +81,5 @@ New objective
         </div>
     </form>
 </div>
+<script src="{{ url_for('static', filename='/new.js') }}"></script>
 {% endblock %}

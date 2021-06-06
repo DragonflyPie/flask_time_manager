@@ -10,7 +10,7 @@ flatpickr(".flatpickr", {
 
 flatpickr(".flatpickr2", {
   defaultDate: null,
-  dateFormat: "U",
+  dateFormat: "Y-m-d",
   onChange: function (selectedDates, dateStr, instance) {
     $("#datepicker").submit();
   },
