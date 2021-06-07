@@ -292,11 +292,11 @@ def update(task_id):
         task.type = form.type.data  
         if task.type != "routine":
             if request.form["datetime"] != "":
-                timestamp = int(request.form["datetime"])
-                objective_time = datetime.fromtimestamp(timestamp)
+                objective_time = datetime.strptime(request.form["datetime"], "%Y-%m-%d %H-%M")
             else:
                 objective_time = None
             task.datetime = objective_time
+
         else:
             task.monday = form.monday.data
             task.tuesday = form.tuesday.data
@@ -311,7 +311,7 @@ def update(task_id):
     else:
         form.content.data = task.content
         form.type.data = task.type
-        return render_template('update.html', title = "Update", task=task, form=form, legend="Update task", parent_task= parent_task)
+        return render_template('update.html', title = "Update", task=task, form=form, legend="Update task", parent_task=parent_task)
 
 
 @app.route("/delete/<int:task_id>", methods=["POST"])

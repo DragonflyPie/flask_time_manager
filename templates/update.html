@@ -41,7 +41,9 @@ Update objective
                 {% endif %}
             </div>
             <div>
-                <input type='text' name='datetime' class="flatpickr" placeholder='{{ task.datetime }}'>
+                <input type='text' name='datetime' class="flatpickr"
+                    value='{{ task.datetime.strftime("%Y-%m-%d %H-%M") }}'
+                    placeholder='{{ task.datetime.strftime("%Y-%m-%d %H-%M") }}'>
             </div>
         </fieldset>
         <fieldset class=checkboxes_inline id=week_checkbox style="display:none">

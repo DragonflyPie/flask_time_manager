@@ -6,46 +6,71 @@ Task manager
 
 {% block content %}
 
-{{ date_dateformat }}
-<form action="" method="POST" id="datepicker">
-    <input type='text' name='datepicker' class="flatpickr2" placeholder='select date' required>
-</form>
-
-
+<div class="header_top">
+    <h4>Plans for<h4>
+            <form action="" method="POST" id="datepicker">
+                <input type='text' name='datepicker' class="flatpickr2 btn btn-outline-dark"
+                    placeholder='{{ date_dateformat }}' required>
+            </form>
+</div>
 
 
 {% for task in tasks %}
-{{ task }}
-
-<form action="{{ url_for('update', task_id = task.id) }}">
-    <input class="btn btn-info" type="submit" value="Update">
-</form>
-<form action="{{ url_for('new_subobjective', task_id = task.id) }}">
-    <input class="btn btn-primary" type="submit" value="new_subobjective">
-</form>
-<form action="{{ url_for('done', task_id = task.id) }}" method="POST">
-    <input class="btn btn-success" type="submit" value="Done">
-</form>
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-    Delete
-</button>
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Delete this objective?</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="task_wrapper">
+    <div class="flex_row">
+        <div class="flex_column column_big">
+            <div class="task">
+                <div class="task_element">
+                    <h5>{{ task.type.capitalize()}}:</h5>
+                </div>
+                <div>
+                    <p>{{ task.content }}</p>
+                </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                <form action="{{ url_for('delete', task_id = task.id) }}" method="POST">
-                    <input class="btn btn-danger" type="submit" value="Delete">
+            <div class="flex_row">
+                <div class="task_element">
+                    <h6>{{ task.datetime.date() }}
+                        {{ task.datetime.time().strftime('%H:%M') }}</h6>
+                </div>
+            </div>
+            <div class="flex_row">
+                <form action="{{ url_for('update', task_id = task.id) }}">
+                    <input class="btn btn-info" type="submit" value="Update">
+                </form>
+                <form action="{{ url_for('new_subobjective', task_id = task.id) }}">
+                    <input class="btn btn-primary" type="submit" value="Subobjective">
                 </form>
             </div>
         </div>
+        <div class="flex_column column_small">
+            <form action="{{ url_for('done', task_id = task.id) }}" method="POST">
+                <input class="btn btn-success task_element" type="submit" value="Done">
+            </form>
+            <button type="button" class="btn btn-danger task_element" data-bs-toggle="modal"
+                data-bs-target="#deleteModal">
+                Delete
+            </button>
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Delete this objective?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                            <form action="{{ url_for('delete', task_id = task.id) }}" method="POST">
+                                <input class="btn btn-danger" type="submit" value="Delete">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
 
+</div>
 {% for subtask in subtasks %}
 {% if subtask.parent_id == task.id %}
 
