@@ -157,7 +157,7 @@ def lookup(searchdate):
             return switcher.get(i)
         day = (dayofweek(week_int))
 
-        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.type == "task", Task.done == False).filter(func.date(Task.datetime) == date_dateformat)
+        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.type == "task", Task.done == False).filter((func.date(Task.datetime) == date_dateformat) | (Task.datetime == None ))
         subtasks = Task.query.filter(Task.parent_id != None, Task.type == "task").filter_by(user_id=current_user.id)
         goals = Task.query.filter(Task.user_id==current_user.id, Task.type == "goal", Task.done == False).filter(func.date(Task.datetime) >= date_dateformat)
         routines = Task.query.filter(Task.user_id == current_user.id).filter(getattr(Task, day) == True)
@@ -292,7 +292,8 @@ def update(task_id):
         task.type = form.type.data  
         if task.type != "routine":
             if request.form["datetime"] != "":
-                objective_time = datetime.strptime(request.form["datetime"], "%Y-%m-%d %H-%M")
+                timestamp = int(request.form["datetime"])
+                objective_time = datetime.fromtimestamp(timestamp)
             else:
                 objective_time = None
             task.datetime = objective_time

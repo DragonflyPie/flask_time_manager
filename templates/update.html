@@ -40,11 +40,18 @@ Update objective
                 {% endfor %}
                 {% endif %}
             </div>
+            {% if task.datetime != None %}
             <div>
                 <input type='text' name='datetime' class="flatpickr"
                     value='{{ task.datetime.strftime("%Y-%m-%d %H-%M") }}'
                     placeholder='{{ task.datetime.strftime("%Y-%m-%d %H-%M") }}'>
             </div>
+            {% else %}
+            <div>
+                <input type='text' name='datetime' class="flatpickr" placeholder="Date and time is not set">
+            </div>
+            {% endif %}
+
         </fieldset>
         <fieldset class=checkboxes_inline id=week_checkbox style="display:none">
             <div class="form-check">
