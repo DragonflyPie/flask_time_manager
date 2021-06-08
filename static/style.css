@@ -115,6 +115,13 @@ main {
   color: rgb(71, 71, 71);
 }
 
+.flatpickr1 {
+  width: 150px;
+}
+
+.flatpickr3 {
+  width: 80px;
+}
 .task_wrapper {
   width: 50%;
   padding: 10px;

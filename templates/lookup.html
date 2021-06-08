@@ -3,9 +3,7 @@
 {% block title %}
 Task manager
 {% endblock %}
-
-{% block content %}
-
+{% block top %}
 <div class="header_top">
     <h4>Plans for<h4>
             <form action="" method="POST" id="datepicker">
@@ -13,6 +11,10 @@ Task manager
                     placeholder='{{ date_dateformat }}' required>
             </form>
 </div>
+{% endblock %}
+{% block content %}
+
+
 
 
 {% for task in tasks %}
@@ -28,16 +30,16 @@ Task manager
                 </div>
             </div>
             <div class="flex_row centered">
-                {% if task.datetime != None %}
+                {% if task.date != None %}
                 <div class="task_element">
-                    <h6>{{ task.datetime.date() }}
-                        {{ task.datetime.time().strftime('%H:%M') }}</h6>
+                    <h6>{{ task.date }}</h6>
                 </div>
                 {% else %}
                 <div class="task_element">
-                    <h6>{{ "Date and time is not set" }}</h6>
+                    <h6>{{ "Date is not set" }}</h6>
                 </div>
                 {% endif %}
+                {{ task.time }}
             </div>
             <div class="flex_row">
                 <form action="{{ url_for('update', task_id = task.id) }}">
@@ -84,7 +86,6 @@ Task manager
 
 <div>
     {{ subtask }}
-    {{ subtask.datetime }}
     <form action="{{ url_for('update', task_id = task.id) }}">
         <input class="btn btn-info" type="submit" value="Update">
     </form>

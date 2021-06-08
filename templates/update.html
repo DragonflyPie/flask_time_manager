@@ -3,7 +3,6 @@
 Update objective
 {% endblock %}
 {% block content %}
-<h4>{{ parent_task.content }}</h4>
 <div class="content">
     <form method="POST" action="" novalidate>
         {{ form.hidden_tag() }}
@@ -40,17 +39,18 @@ Update objective
                 {% endfor %}
                 {% endif %}
             </div>
-            {% if task.datetime != None %}
+            {% if task.date != None %}
             <div>
-                <input type='text' name='datetime' class="flatpickr"
-                    value='{{ task.datetime.strftime("%Y-%m-%d %H-%M") }}'
-                    placeholder='{{ task.datetime.strftime("%Y-%m-%d %H-%M") }}'>
+                <input type='text' name='date' class="flatpickr1" placeholder="{{ task.date }}" value="{{ task.date }}">
             </div>
             {% else %}
             <div>
-                <input type='text' name='datetime' class="flatpickr" placeholder="Date and time is not set">
+                <input type='text' name='date' class="flatpickr1" placeholder='Select date'>
             </div>
             {% endif %}
+            <div>
+                <input type='text' name='time' class="flatpickr3" placeholder="{{ task.time }}" value="{{ task.time }}">
+            </div>
 
         </fieldset>
         <fieldset class=checkboxes_inline id=week_checkbox style="display:none">

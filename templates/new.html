@@ -5,16 +5,20 @@ New objective
 {% endblock %}
 
 {% block content %}
+{% if parent_objective != None %}
 <h4>{{ parent_objective.content }}</h4>
+{% endif %}
+
+
 <div class="content">
     <form method="POST" action="" novalidate>
         {{ form.hidden_tag() }}
         <fieldset>
             <legend>{{ legend }}</legend>
             <div class="form_group">
-                {{ form.content.label(class="form_control_label") }}
+                {{ form.content.label(class="form-control-label") }}
                 {% if form.content.errors %}
-                {{ form.content(class="form_control form_control_lg is-invalid") }}
+                {{ form.content(class="form_control form-control_lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.content.errors %}
                     <span>{{ error }}</span>
@@ -25,9 +29,9 @@ New objective
                 {% endif %}
             </div>
             <div class="form_list" id="radioweeek">
-                {{ form.type.label(class="form_control_label") }}
+                {{ form.type.label(class="form-control-label") }}
                 {% if form.type.errors %}
-                {{ form.type(class="form_control form_control_lg is-invalid") }}
+                {{ form.type(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.type.errors %}
                     <span>{{ error }}</span>
@@ -42,10 +46,12 @@ New objective
                 {% endfor %}
                 {% endif %}
             </div>
-            <div>
-                <input type='text' name='datetime' class="flatpickr" placeholder='select date and time'>
-            </div>
         </fieldset>
+        <div class="flex_row">
+            <input type='text' name='date' class="flatpickr1" placeholder='Select date'>
+            <input type='text' name='time' class="flatpickr3 form-control" placeholder='Select time'>
+        </div>
+
         <fieldset class=checkboxes_inline id=week_checkbox style="display:none">
             <div class="form-check">
                 {{ form.monday(class="form-check-input")}}

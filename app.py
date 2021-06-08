@@ -4,7 +4,7 @@ from flask import Flask, redirect, render_template, request, flash, url_for, abo
 from flask.sessions import NullSession
 from flask_sqlalchemy import SQLAlchemy
 from flask_session import Session
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timezone, time
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 #from forms import Registration_form, Login_form
@@ -55,8 +55,8 @@ class Task(db.Model):
     content = db.Column(db.Text, nullable=False)
     type = db.Column(db.String(10), nullable=False, default="task")
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    datetime = db.Column(db.DateTime)
-    duration = db.Column(db.Integer)
+    date = db.Column(db.Date)
+    time = db.Column(db.Time)
     parent_id = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     done = db.Column(db.Boolean, nullable=False, default=False)
@@ -157,9 +157,9 @@ def lookup(searchdate):
             return switcher.get(i)
         day = (dayofweek(week_int))
 
-        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.type == "task", Task.done == False).filter((func.date(Task.datetime) == date_dateformat) | (Task.datetime == None ))
+        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.type == "task", Task.done == False).filter((Task.date == date_dateformat) | (Task.date == None ))
         subtasks = Task.query.filter(Task.parent_id != None, Task.type == "task").filter_by(user_id=current_user.id)
-        goals = Task.query.filter(Task.user_id==current_user.id, Task.type == "goal", Task.done == False).filter(func.date(Task.datetime) >= date_dateformat)
+        goals = Task.query.filter(Task.user_id==current_user.id, Task.type == "goal", Task.done == False).filter(Task.date >= date_dateformat)
         routines = Task.query.filter(Task.user_id == current_user.id).filter(getattr(Task, day) == True)
         return render_template("lookup.html", tasks=tasks, subtasks=subtasks, routines=routines, goals=goals, date_dateformat=date_dateformat)
 
@@ -213,13 +213,12 @@ def new_object():
     form = Objective_form()
     if request.method == 'POST' and form.validate_on_submit():
         task = Task(content = form.content.data, type = form.type.data, user=current_user)
+        task.time = datetime.strptime(request.form["time"], "%H:%M").time()
         if task.type != "routine":
-            if request.form["datetime"] != "":
-                timestamp = int(request.form["datetime"])
-                objective_time = datetime.fromtimestamp(timestamp)
+            if request.form["date"] != "":
+                task.date = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
             else:
-                objective_time = None
-            task.datetime = objective_time
+                task.time = None    
         else:
             task.monday = form.monday.data
             task.tuesday = form.tuesday.data
@@ -243,13 +242,12 @@ def new_subobjective(task_id):
     parent_objective = Task.query.get_or_404(task_id)
     if request.method == 'POST' and form.validate_on_submit():
         task = Task(content = form.content.data, type = form.type.data, user=current_user, parent_id = task_id)
+        task.time = datetime.strptime(request.form["time"], "%H:%M").time()
         if task.type != "routine":
-            if request.form["datetime"] != "":
-                timestamp = int(request.form["datetime"])
-                objective_time = datetime.fromtimestamp(timestamp)
+            if request.form["date"] != "":
+                task.date = datetime.strtime(request.form["date"], "%Y-%m-%d")
             else:
-                objective_time = None
-            task.datetime = objective_time
+                task.datetime = None    
         else:
             task.monday = form.monday.data
             task.tuesday = form.tuesday.data
@@ -290,14 +288,12 @@ def update(task_id):
     if request.method == "POST" and form.validate_on_submit():
         task.content = form.content.data
         task.type = form.type.data  
+        task.time = datetime.strptime(request.form["time"], "%H:%M").time()
         if task.type != "routine":
-            if request.form["datetime"] != "":
-                timestamp = int(request.form["datetime"])
-                objective_time = datetime.fromtimestamp(timestamp)
+            if request.form["date"] != "":
+                task.date = datetime.strptime(request.form["date"], "%Y-%m-%d")
             else:
-                objective_time = None
-            task.datetime = objective_time
-
+                task.datetime = None
         else:
             task.monday = form.monday.data
             task.tuesday = form.tuesday.data
