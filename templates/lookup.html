@@ -7,8 +7,8 @@ Task manager
 <div class="header_top">
     <h4>Plans for<h4>
             <form action="" method="POST" id="datepicker">
-                <input type='text' name='datepicker' class="flatpickr2 btn btn-outline-dark"
-                    placeholder='{{ date_dateformat }}' required>
+                <input type='text' name='datepicker' class="flatpickr2 btn" placeholder='{{ date_dateformat }}'
+                    required>
             </form>
 </div>
 {% endblock %}
@@ -21,16 +21,16 @@ Task manager
 <div class="task_wrapper">
     <div class="flex_row">
         <div class="flex_column column_big">
+            <div class="task_element">
+                <h5>{{ task.type.capitalize()}}</h5>
+            </div>
             <div class="task">
-                <div class="task_element">
-                    <h5>{{ task.type.capitalize()}}:</h5>
-                </div>
                 <div>
                     <p>{{ task.content }}</p>
                 </div>
             </div>
             <div class="flex_row centered">
-                {% if task.date != None %}
+                {% if task.date %}
                 <div class="task_element">
                     <h6>{{ task.date }}</h6>
                 </div>
@@ -39,17 +39,21 @@ Task manager
                     <h6>{{ "Date is not set" }}</h6>
                 </div>
                 {% endif %}
-                {{ task.time }}
+                {% if task.time %}
+                <h6>{{ task.time.strftime("%H:%M") }}</h6>
+                {% else %}
+                <h6> {{ "Time is not set" }}</h6>
+                {% endif %}
+
             </div>
             <div class="flex_row">
                 <form action="{{ url_for('update', task_id = task.id) }}">
-                    <input class="btn btn-info task_element" type="submit" value="Update">
+                    <input class="btn task_element" type="submit" value="Update">
                 </form>
                 <form action="{{ url_for('new_subobjective', task_id = task.id) }}">
-                    <input class="btn btn-primary task_element" type="submit" value="Subobjective">
+                    <input class="btn task_element" type="submit" value="Subobjective">
                 </form>
-                <button type="button" class="btn btn-danger task_element" data-bs-toggle="modal"
-                    data-bs-target="#deleteModal">
+                <button type="button" class="btn task_element" data-bs-toggle="modal" data-bs-target="#deleteModal">
                     Delete
                 </button>
                 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
@@ -74,7 +78,7 @@ Task manager
         </div>
         <div class="flex_column column_small">
             <form action="{{ url_for('done', task_id = task.id) }}" method="POST">
-                <input class="btn btn-success task_element" type="submit" value="Done">
+                <input class="btn task_element" type="submit" value="Done">
             </form>
 
         </div>

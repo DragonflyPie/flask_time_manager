@@ -12,6 +12,9 @@ body {
 
 p {
   margin: 0px;
+  text-align: justify;
+  text-indent: 1.5em;
+  color: #fff4dc;
 }
 
 ul {
@@ -24,7 +27,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   height: 48px;
-  background-color: #2b89a5;
+  background-color: #797979;
   font-family: "Cairo", sans-serif;
   color: #fff4dc;
   font-size: 20px;
@@ -44,6 +47,13 @@ h6 {
   margin-bottom: 0.1rem;
 }
 
+h5 {
+  margin: 4px 0px;
+}
+
+h6 {
+  margin: 4px 0px;
+}
 .logo {
   display: inline-flex;
   letter-spacing: 5px;
@@ -83,8 +93,28 @@ main {
   display: flex;
   flex-direction: column;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  background-color: rgb(218, 218, 218);
+}
+
+.new_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+}
+
+.new_textfield {
+  width: 100%;
+}
+
+textarea {
+  min-height: 100px;
+}
+
+.new_task {
+  width: 100%;
 }
 
 .content {
@@ -92,17 +122,29 @@ main {
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  margin-top: 50px;
   width: 100%;
 }
 
 .header_top {
-  padding: 25px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  margin-bottom: 10px;
   width: 50%;
   border: solid black 1px;
+  border-top: none;
+  border-radius: 0px 0px 5px 5px;
+  height: 75px;
+}
+
+.alert {
+  margin: 20px;
+}
+
+legend {
+  margin: 5px;
 }
 
 .flatpickr2 {
@@ -115,8 +157,13 @@ main {
   color: rgb(71, 71, 71);
 }
 
+.flatpickr1,
+.flatpickr3 {
+  margin: 0px 10px;
+}
+
 .flatpickr1 {
-  width: 150px;
+  width: 130px;
 }
 
 .flatpickr3 {
@@ -125,19 +172,23 @@ main {
 .task_wrapper {
   width: 50%;
   padding: 10px;
+  margin: 10px 0px;
   border: solid black 1px;
+  border-radius: 5px;
+  background-color: rgb(172, 172, 172);
 }
+
 .flex_row {
   display: flex;
   flex-direction: row;
   align-items: stretch;
   justify-content: space-between;
   width: 100%;
-  /*border: solid black 1px;*/
 }
 
 .centered {
   justify-content: space-around;
+  border-bottom: solid black 1px;
 }
 .flex_column {
   display: flex;
@@ -153,24 +204,31 @@ main {
 }
 
 .column_small {
-  min-height: 200px;
   justify-content: space-evenly;
 }
 
 .btn {
   padding: 5px;
-  margin: 5px 20px;
+  margin: 15px;
+  border: 1px solid black;
+}
+
+.btn:hover {
+  background-color: #797979;
+  color: #fff4dc;
 }
 
 .task {
   text-align: center;
   width: 100%;
   border-bottom: 1px solid black;
+  border-top: 1px solid black;
   padding: 10px;
   margin: 0px;
+  background-color: #797979;
 }
-.form_group {
+
+.form_list {
   display: flex;
-  flex-direction: column;
-  width: 100%;
+  justify-content: space-around;
 }

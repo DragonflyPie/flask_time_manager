@@ -101,7 +101,7 @@ class Login_form(FlaskForm):
 
 class Objective_form(FlaskForm):
     content = TextAreaField("Objective", validators=[DataRequired("Doing nothing is not a plan!")])
-    type = RadioField("Type", id = "radioweek", choices=[('task', 'Task'), ('routine', 'Routine'), ('goal', 'Goal')], default = 'task')
+    type = RadioField("Type:", id = "radioweek", choices=[('task', 'Task'), ('routine', 'Routine'), ('goal', 'Goal')], default = 'task')
     monday = BooleanField("Monday", default="checked")
     tuesday = BooleanField("Tuesday", default="checked")
     wednesday = BooleanField("Wednesday", default="checked")

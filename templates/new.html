@@ -3,19 +3,22 @@
 {% block title %}
 New objective
 {% endblock %}
-
+{% block top %}
+<div class="header_top">
+    <h4>{{ legend }}<h4>
+</div>
+{% endblock %}
 {% block content %}
-{% if parent_objective != None %}
+{% if parent_objective %}
 <h4>{{ parent_objective.content }}</h4>
 {% endif %}
 
 
 <div class="content">
-    <form method="POST" action="" novalidate>
+    <form method="POST" action="" class="new_form" novalidate>
         {{ form.hidden_tag() }}
-        <fieldset>
-            <legend>{{ legend }}</legend>
-            <div class="form_group">
+        <fieldset class="new_textfield">
+            <div class="">
                 {{ form.content.label(class="form-control-label") }}
                 {% if form.content.errors %}
                 {{ form.content(class="form_control form-control_lg is-invalid") }}
@@ -29,7 +32,7 @@ New objective
                 {% endif %}
             </div>
             <div class="form_list" id="radioweeek">
-                {{ form.type.label(class="form-control-label") }}
+                <!-- {{ form.type.label(class="form-control-label") }} -->
                 {% if form.type.errors %}
                 {{ form.type(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -39,10 +42,10 @@ New objective
                 </div>
                 {% else %}
                 {% for subfield in form.type %}
-                <tr>
-                    <td>{{ subfield.label }}</td>
-                    <td>{{ subfield }}</td>
-                </tr>
+                <div>
+                    {{ subfield.label }}
+                    {{ subfield }}
+                </div>
                 {% endfor %}
                 {% endif %}
             </div>
@@ -82,7 +85,7 @@ New objective
                 {{ form.sunday.label(class="form-check-label")}}
             </div>
         </fieldset>
-        <div class="form_group">
+        <div class="">
             {{ form.submit(class="form_button")}}
         </div>
     </form>
