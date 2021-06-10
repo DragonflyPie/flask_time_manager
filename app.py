@@ -109,7 +109,7 @@ class Objective_form(FlaskForm):
     friday = BooleanField("Friday", default="checked")
     saturday = BooleanField("Saturday", default="checked")
     sunday = BooleanField("Sunday", default="checked")
-    submit = SubmitField("Submit new objective")
+    submit = SubmitField("Submit")
 
 def apology(message, code=400):
     return render_template("apology.html", message=message, code=code), code

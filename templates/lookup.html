@@ -48,12 +48,13 @@ Task manager
             </div>
             <div class="flex_row">
                 <form action="{{ url_for('update', task_id = task.id) }}">
-                    <input class="btn task_element" type="submit" value="Update">
+                    <input class="btn task_element mg_15" type="submit" value="Update">
                 </form>
                 <form action="{{ url_for('new_subobjective', task_id = task.id) }}">
-                    <input class="btn task_element" type="submit" value="Subobjective">
+                    <input class="btn task_element mg_15" type="submit" value="Subobjective">
                 </form>
-                <button type="button" class="btn task_element" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                <button type="button" class="btn task_element mg_15" data-bs-toggle="modal"
+                    data-bs-target="#deleteModal">
                     Delete
                 </button>
                 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
@@ -80,38 +81,72 @@ Task manager
             <form action="{{ url_for('done', task_id = task.id) }}" method="POST">
                 <input class="btn task_element" type="submit" value="Done">
             </form>
-
         </div>
     </div>
-
 </div>
 {% for subtask in subtasks %}
 {% if subtask.parent_id == task.id %}
-
-<div>
-    {{ subtask }}
-    <form action="{{ url_for('update', task_id = task.id) }}">
-        <input class="btn btn-info" type="submit" value="Update">
-    </form>
-    <form action="{{ url_for('done', task_id = subtask.id) }}" method="POST">
-        <input class="btn btn-success" type="submit" value="Done">
-    </form>
-    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-        Delete
-    </button>
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Delete this objective?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<div class="subtask_row">
+    <div class="task_wrapper">
+        <div class="flex_row">
+            <div class="flex_column column_big">
+                <div class="task_element">
+                    <h5>Subobjective: {{ subtask.type.capitalize()}}</h5>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                    <form action="{{ url_for('delete', task_id = subtask.id) }}" method="POST">
-                        <input class="btn btn-danger" type="submit" value="Delete">
+                <div class="task">
+                    <div>
+                        <p>{{ subtask.content }}</p>
+                    </div>
+                </div>
+                <div class="flex_row centered">
+                    {% if subtask.date %}
+                    <div class="task_element">
+                        <h6>{{ subtask.date }}</h6>
+                    </div>
+                    {% else %}
+                    <div class="task_element">
+                        <h6>{{ "Date is not set" }}</h6>
+                    </div>
+                    {% endif %}
+                    {% if subtask.time %}
+                    <h6>{{ subtask.time.strftime("%H:%M") }}</h6>
+                    {% else %}
+                    <h6> {{ "Time is not set" }}</h6>
+                    {% endif %}
+                </div>
+                <div class="flex_row">
+                    <form action="{{ url_for('update', task_id = subtask.id) }}">
+                        <input class="btn task_element mg_15" type="submit" value="Update">
                     </form>
+                    <button type="button" class="btn task_element mg_15" data-bs-toggle="modal"
+                        data-bs-target="#deleteModal">
+                        Delete
+                    </button>
+                    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModalLabel">Delete this objective?</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Back</button>
+                                    <form action="{{ url_for('delete', task_id = subtask.id) }}" method="POST">
+                                        <input class="btn btn-danger" type="submit" value="Delete">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
+            <div class="flex_column column_small">
+                <form action="{{ url_for('done', task_id = subtask.id) }}" method="POST">
+                    <input class="btn task_element" type="submit" value="Done">
+                </form>
             </div>
         </div>
     </div>

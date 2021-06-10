@@ -107,6 +107,19 @@ main {
   border-radius: 5px;
 }
 
+.inline_block {
+  display: flex;
+}
+
+.inline_block p {
+  display: none;
+  align-items: center;
+  text-align: center;
+  text-indent: 0em;
+  justify-content: center;
+  padding-left: 5px;
+  color: black;
+}
 .new_textfield {
   width: 100%;
   display: flex;
@@ -114,8 +127,19 @@ main {
   justify-content: space-between;
   min-height: 150px;
   padding-left: 10px;
+  border-bottom: 1px solid black;
 }
 
+.form-check {
+  margin: auto;
+}
+
+.form-control {
+  border: 1px solid gray;
+}
+.form-control-label {
+  padding: 10px;
+}
 textarea {
   min-height: 100px;
 }
@@ -182,8 +206,12 @@ legend {
 
 .flatpickr3 {
   width: 80px;
+  text-align: center;
 }
+
 .task_wrapper {
+  display: flex;
+  flex-direction: column;
   width: 50%;
   padding: 10px;
   margin: 10px 0px;
@@ -192,12 +220,24 @@ legend {
   background-color: rgb(172, 172, 172);
 }
 
+.space {
+  width: 5%;
+  height: 1px;
+}
 .flex_row {
   display: flex;
   flex-direction: row;
   align-items: stretch;
   justify-content: space-between;
   width: 100%;
+  align-content: stretch;
+}
+
+.subtask_row {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding-left: 100px;
 }
 .form_line {
   padding: 10px 0px;
@@ -222,19 +262,21 @@ legend {
   justify-content: space-between;
 }
 
+.mg_15 {
+  margin: 15px;
+}
 .column_big {
-  width: 90%;
+  min-width: 90%;
   border: 1px solid black;
   border-radius: 5px;
 }
 
 .column_small {
   justify-content: space-evenly;
+  width: 10%;
 }
 
 .btn {
-  padding: 5px;
-  margin: 15px;
   border: 1px solid black;
 }
 

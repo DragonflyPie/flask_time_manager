@@ -16,15 +16,16 @@ New objective
 
 <div class="content">
     <form method="POST" action="" class="new_form" novalidate>
-        {{ form.hidden_tag() }}
-        <fieldset class="new_textfield">
-            <div class="new_task">
-                <div>
-                    {{ form.content.label(class="form-control-label") }}
-                </div>
 
+        {{ form.hidden_tag() }}
+        <div>
+            {{ form.content.label(class="form-control-label") }}
+        </div>
+        <fieldset class="new_textfield">
+
+            <div class="new_task">
                 {% if form.content.errors %}
-                {{ form.content(class="form_control form-control_lg is-invalid") }}
+                {{ form.content(class="new_task form_control form-control_lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.content.errors %}
                     <span>{{ error }}</span>
@@ -64,13 +65,14 @@ New objective
                             {{ form.sunday.label(class="form-check-label")}}
                         </div>
                     </fieldset>
-                    <div id="datepickr">
-                        <input type='text' name='date' class="flatpickr1" placeholder='Select date'>
+                    <div class="inline_block">
+                        <div id="datepickr">
+                            <input type='text' name='date' class="flatpickr1" placeholder='Select date'>
+                        </div>
+                        <p> - deadline for the goal</p>
                     </div>
                     <input type='text' name='time' class="flatpickr3 form-control" placeholder='Select time'>
                 </div>
-
-
             </div>
             <div class="form_list" id="radioweeek">
                 <!-- {{ form.type.label(class="form-control-label") }} -->
@@ -92,8 +94,8 @@ New objective
             </div>
         </fieldset>
 
-        <div class="">
-            {{ form.submit(class="form_button")}}
+        <div class="form_line">
+            {{ form.submit(class="btn form_button")}}
         </div>
     </form>
 </div>
