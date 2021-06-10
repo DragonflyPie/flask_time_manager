@@ -103,10 +103,17 @@ main {
   flex-direction: column;
   align-items: center;
   width: 50%;
+  border: 1px solid black;
+  border-radius: 5px;
 }
 
 .new_textfield {
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 150px;
+  padding-left: 10px;
 }
 
 textarea {
@@ -114,7 +121,19 @@ textarea {
 }
 
 .new_task {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
+}
+
+.form_list {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 100px;
+  margin-left: 10px;
+  height: 150px;
 }
 
 .content {
@@ -157,11 +176,6 @@ legend {
   color: rgb(71, 71, 71);
 }
 
-.flatpickr1,
-.flatpickr3 {
-  margin: 0px 10px;
-}
-
 .flatpickr1 {
   width: 130px;
 }
@@ -185,11 +199,22 @@ legend {
   justify-content: space-between;
   width: 100%;
 }
+.form_line {
+  padding: 10px 0px;
+}
+
+.checkboxes_inline {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  padding-right: 10px;
+}
 
 .centered {
   justify-content: space-around;
-  border-bottom: solid black 1px;
 }
+
 .flex_column {
   display: flex;
   flex-direction: column;
@@ -226,9 +251,4 @@ legend {
   padding: 10px;
   margin: 0px;
   background-color: #797979;
-}
-
-.form_list {
-  display: flex;
-  justify-content: space-around;
 }

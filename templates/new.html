@@ -18,8 +18,11 @@ New objective
     <form method="POST" action="" class="new_form" novalidate>
         {{ form.hidden_tag() }}
         <fieldset class="new_textfield">
-            <div class="">
-                {{ form.content.label(class="form-control-label") }}
+            <div class="new_task">
+                <div>
+                    {{ form.content.label(class="form-control-label") }}
+                </div>
+
                 {% if form.content.errors %}
                 {{ form.content(class="form_control form-control_lg is-invalid") }}
                 <div class="invalid-feedback">
@@ -30,6 +33,44 @@ New objective
                 {% else %}
                 {{ form.content(class="new_task") }}
                 {% endif %}
+                <div class="flex_row form_line">
+                    <fieldset class=checkboxes_inline id=week_checkbox style="display:none">
+                        <div class="form-check">
+                            {{ form.monday(class="form-check-input")}}
+                            {{ form.monday.label(class="form-check-label")}}
+                        </div>
+                        <div class="form-check">
+                            {{ form.tuesday(class="form-check-input")}}
+                            {{ form.tuesday.label(class="form-check-label")}}
+                        </div>
+                        <div class="form-check">
+                            {{ form.wednesday(class="form-check-input")}}
+                            {{ form.wednesday.label(class="form-check-label")}}
+                        </div>
+                        <div class="form-check">
+                            {{ form.thursday(class="form-check-input")}}
+                            {{ form.thursday.label(class="form-check-label")}}
+                        </div>
+                        <div class="form-check">
+                            {{ form.friday(class="form-check-input")}}
+                            {{ form.friday.label(class="form-check-label")}}
+                        </div>
+                        <div class="form-check">
+                            {{ form.saturday(class="form-check-input")}}
+                            {{ form.saturday.label(class="form-check-label")}}
+                        </div>
+                        <div class="form-check">
+                            {{ form.sunday(class="form-check-input")}}
+                            {{ form.sunday.label(class="form-check-label")}}
+                        </div>
+                    </fieldset>
+                    <div id="datepickr">
+                        <input type='text' name='date' class="flatpickr1" placeholder='Select date'>
+                    </div>
+                    <input type='text' name='time' class="flatpickr3 form-control" placeholder='Select time'>
+                </div>
+
+
             </div>
             <div class="form_list" id="radioweeek">
                 <!-- {{ form.type.label(class="form-control-label") }} -->
@@ -43,48 +84,14 @@ New objective
                 {% else %}
                 {% for subfield in form.type %}
                 <div>
-                    {{ subfield.label }}
                     {{ subfield }}
+                    {{ subfield.label }}
                 </div>
                 {% endfor %}
                 {% endif %}
             </div>
         </fieldset>
-        <div class="flex_row">
-            <input type='text' name='date' class="flatpickr1" placeholder='Select date'>
-            <input type='text' name='time' class="flatpickr3 form-control" placeholder='Select time'>
-        </div>
 
-        <fieldset class=checkboxes_inline id=week_checkbox style="display:none">
-            <div class="form-check">
-                {{ form.monday(class="form-check-input")}}
-                {{ form.monday.label(class="form-check-label")}}
-            </div>
-            <div class="form-check">
-                {{ form.tuesday(class="form-check-input")}}
-                {{ form.tuesday.label(class="form-check-label")}}
-            </div>
-            <div class="form-check">
-                {{ form.wednesday(class="form-check-input")}}
-                {{ form.wednesday.label(class="form-check-label")}}
-            </div>
-            <div class="form-check">
-                {{ form.thursday(class="form-check-input")}}
-                {{ form.thursday.label(class="form-check-label")}}
-            </div>
-            <div class="form-check">
-                {{ form.friday(class="form-check-input")}}
-                {{ form.friday.label(class="form-check-label")}}
-            </div>
-            <div class="form-check">
-                {{ form.saturday(class="form-check-input")}}
-                {{ form.saturday.label(class="form-check-label")}}
-            </div>
-            <div class="form-check">
-                {{ form.sunday(class="form-check-input")}}
-                {{ form.sunday.label(class="form-check-label")}}
-            </div>
-        </fieldset>
         <div class="">
             {{ form.submit(class="form_button")}}
         </div>
