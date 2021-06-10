@@ -158,9 +158,9 @@ def lookup(searchdate):
         day = (dayofweek(week_int))
 
         tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.type == "task", Task.done == False).filter((Task.date == date_dateformat) | (Task.date == None ))
-        subtasks = Task.query.filter(Task.parent_id != None, Task.type == "task").filter_by(user_id=current_user.id)
-        goals = Task.query.filter(Task.user_id==current_user.id, Task.type == "goal", Task.done == False).filter(Task.date >= date_dateformat)
+        subtasks = Task.query.filter(Task.parent_id != None, Task.type == "task", Task.done == False).filter_by(user_id=current_user.id)
         routines = Task.query.filter(Task.user_id == current_user.id).filter(getattr(Task, day) == True)
+        goals = Task.query.filter(Task.user_id==current_user.id, Task.type == "goal", Task.done == False).filter(Task.date >= date_dateformat)
         return render_template("lookup.html", tasks=tasks, subtasks=subtasks, routines=routines, goals=goals, date_dateformat=date_dateformat)
 
 
@@ -218,7 +218,7 @@ def new_object():
             if request.form["date"] != "":
                 task.date = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
             else:
-                task.time = None    
+                task.date = None    
         else:
             task.monday = form.monday.data
             task.tuesday = form.tuesday.data
@@ -245,9 +245,9 @@ def new_subobjective(task_id):
         task.time = datetime.strptime(request.form["time"], "%H:%M").time()
         if task.type != "routine":
             if request.form["date"] != "":
-                task.date = datetime.strtime(request.form["date"], "%Y-%m-%d")
+                task.date = datetime.strptime(request.form["date"], "%Y-%m-%d").date()
             else:
-                task.datetime = None    
+                task.date = None    
         else:
             task.monday = form.monday.data
             task.tuesday = form.tuesday.data
