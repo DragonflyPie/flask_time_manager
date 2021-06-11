@@ -13,8 +13,9 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, BooleanField, RadioField, DecimalField, TextAreaField, IntegerField, SelectMultipleField
 from wtforms.fields.html5 import DateField, TimeField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError, NumberRange, Optional
-from sqlalchemy import func
 from datetime import date
+from sqlalchemy import or_
+
 
 
 
@@ -157,11 +158,14 @@ def lookup(searchdate):
             return switcher.get(i)
         day = (dayofweek(week_int))
 
-        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.type == "task", Task.done == False).filter((Task.date == date_dateformat) | (Task.date == None ))
-        subtasks = Task.query.filter(Task.parent_id != None, Task.type == "task", Task.done == False).filter_by(user_id=current_user.id)
-        routines = Task.query.filter(Task.user_id == current_user.id).filter(getattr(Task, day) == True)
-        goals = Task.query.filter(Task.user_id==current_user.id, Task.type == "goal", Task.done == False).filter(Task.date >= date_dateformat)
-        return render_template("lookup.html", tasks=tasks, subtasks=subtasks, routines=routines, goals=goals, date_dateformat=date_dateformat)
+        tasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.type == "task", Task.done == False, Task.date == date_dateformat)
+        subtasks = Task.query.filter(Task.user_id==current_user.id, Task.parent_id != None, Task.type == "task", Task.done == False)
+        routines = Task.query.filter(Task.user_id == current_user.id, getattr(Task, day) == True)
+        goals = Task.query.filter(Task.user_id==current_user.id, Task.type == "goal", Task.done == False, Task.date >= date_dateformat)
+        unsorted = Task.query.filter(Task.user_id==current_user.id, Task.parent_id == None, Task.done == False, Task.date == None).filter(Task.type.in_(("task", "goal")))
+        tasks_and_routines = tasks.union(routines).order_by(Task.time)
+        all = Task.query.filter(Task.done == False)
+        return render_template("lookup.html", subtasks=subtasks, all = all, tasks_and_routines=tasks_and_routines, unsorted=unsorted, goals=goals, date_dateformat=date_dateformat)
 
 
 
