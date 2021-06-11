@@ -294,3 +294,19 @@ legend {
   margin: 0px;
   background-color: #797979;
 }
+
+.task_background {
+  background-color: rgb(197, 146, 116);
+}
+
+.routine_background {
+  background-color: rgb(160, 197, 100);
+}
+
+.goal_background {
+  background-color: rgb(147, 175, 226);
+}
+
+.unsorted_background {
+  background-color: rgb(212, 212, 212);
+}

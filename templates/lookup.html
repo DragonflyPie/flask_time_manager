@@ -14,7 +14,7 @@ Task manager
 {% endblock %}
 {% block content %}
 {% for task in tasks_and_routines %}
-<div class="task_wrapper">
+<div class="task_wrapper {{task.type}}_background">
     <div class="flex_row">
         <div class="flex_column column_big">
             <div class="task_element">
@@ -78,7 +78,7 @@ Task manager
 {% for subtask in subtasks %}
 {% if subtask.parent_id == task.id %}
 <div class="subtask_row">
-    <div class="task_wrapper">
+    <div class="task_wrapper {{subtask.type}}_background">
         <div class="flex_row">
             <div class="flex_column column_big">
                 <div class="task_element">
@@ -146,7 +146,7 @@ Task manager
 {% endfor %}
 {% endfor %}
 {% for goal in goals %}
-<div class="task_wrapper">
+<div class="task_wrapper goal_background">
     <div class="flex_row">
         <div class="flex_column column_big">
             <div class="task_element">
@@ -214,7 +214,7 @@ Task manager
 </div>
 {% endfor %}
 {% for unsort in unsorted %}
-<div class="task_wrapper">
+<div class="task_wrapper unsorted_background">
     <div class="flex_row">
         <div class="flex_column column_big">
             <div class="task_element">

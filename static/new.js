@@ -25,4 +25,24 @@ let weekdays = () => {
   });
 };
 
+function check() {
+  let week = document.getElementById("week_checkbox");
+  let datepicker = document.getElementById("datepickr");
+  let goal = document.querySelector(".inline_block p");
+  if (document.getElementById("radioweek-0").checked) {
+    week.style.display = "none";
+    datepicker.style.display = "block";
+    goal.style.display = "none";
+  } else if (document.getElementById("radioweek-1").checked) {
+    week.style.display = "flex";
+    datepicker.style.display = "none";
+    goal.style.display = "none";
+  } else if (document.getElementById("radioweek-2").checked) {
+    week.style.display = "none";
+    datepicker.style.display = "block";
+    goal.style.display = "flex";
+  }
+}
+
+check();
 weekdays();
