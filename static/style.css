@@ -144,6 +144,15 @@ textarea {
   min-height: 100px;
 }
 
+.loginform {
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 25px;
+  background-color: hotpink;
+}
+.form-check {
+  padding: 10px;
+}
 .new_task {
   display: flex;
   flex-direction: column;
@@ -168,7 +177,12 @@ textarea {
   margin-top: 50px;
   width: 100%;
 }
-
+.padding_10 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 10px;
+}
 .header_top {
   display: flex;
   flex-direction: row;
@@ -251,8 +265,33 @@ legend {
   padding-right: 10px;
 }
 
+.padding_vertical {
+  padding: 10px 0px;
+}
+.padding_top {
+  padding-top: 15px;
+}
+
 .centered {
-  justify-content: space-around;
+  justify-content: center;
+  text-align: center;
+  text-indent: 0px;
+}
+
+.form-control-label {
+  padding: 10px 0px;
+}
+.form-check .form-check-input {
+  float: none;
+}
+.centered p {
+  text-indent: 0px;
+  margin: 5px;
+}
+
+.btn_login {
+  background-color: rgb(119, 111, 74);
+  margin-top: 10px;
 }
 
 .flex_column {

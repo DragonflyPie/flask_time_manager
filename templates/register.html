@@ -6,70 +6,70 @@
 
 {% block content %}
 <div class="content">
-    <form method="POST" action="">
+    <form method="POST" action="" class="loginform">
         {{ form.hidden_tag() }}
         <fieldset>
-            <legend>Join today</legend>
-            <div class="form_group">
-                {{ form.username.label(class="form_control_label") }}
+            <legend class="centered">Join today</legend>
+            <div class="form-group">
+                {{ form.username.label(class="form-control-label") }}
 
                 {% if form.username.errors %}
-                {{ form.username(class="form_control form_control_lg is-invalid") }}
+                {{ form.username(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.username.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.username(class="form_control form_control_lg") }}
+                {{ form.username(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form_group">
-                {{ form.email.label(class="form_control_label") }}
+            <div class="form-group">
+                {{ form.email.label(class="form-control-label") }}
                 {% if form.email.errors %}
-                {{ form.email(class="form_control form_control_lg is-invalid") }}
+                {{ form.email(class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.email.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.email(class="form_control form_control_lg") }}
+                {{ form.email(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form_group">
-                {{ form.password.label(class="form_control_label") }}
+            <div class="form-group">
+                {{ form.password.label(class="form-control-label") }}
                 {% if form.password.errors %}
-                {{ form.password(class="form_contorl form_control_lg is-invalid") }}
+                {{ form.password(class="form-contorl form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.password.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.password(class="form_control form_control_lg") }}
+                {{ form.password(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
-            <div class="form_group">
-                {{ form.confirmation.label(class="form_control_label") }}
+            <div class="form-group">
+                {{ form.confirmation.label(class="form-control-label") }}
                 {% if form.confirmation.errors %}
-                {{ form.confirmation(class="form_contorl form_control_lg is-invalid") }}
+                {{ form.confirmation(class="form-contorl form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.confirmation.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.confirmation(class="form_control form_control_lg") }}
+                {{ form.confirmation(class="form-control form-control-lg") }}
                 {% endif %}
             </div>
         </fieldset>
-        <div class="form_group">
-            {{ form.submit(class="form_button")}}
+        <div class="form-group centered padding_top">
+            {{ form.submit(class="form-button btn btn_login")}}
         </div>
     </form>
     <div class="">
-        <small class="text_muted">
+        <small class="text-muted">
             Have an account? <a href="{{ url_for('login') }}">Log in</a>
         </small>
     </div>

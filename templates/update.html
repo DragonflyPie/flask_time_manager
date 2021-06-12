@@ -65,12 +65,12 @@ Update objective
                     </fieldset>
                     <div class="inline_block">
                         {% if task.date %}
-                        <div>
+                        <div id="datepickr">
                             <input type='text' name='date' class="flatpickr1" placeholder="{{ task.date }}"
                                 value="{{ task.date }}">
                         </div>
                         {% else %}
-                        <div>
+                        <div id="datepickr">
                             <input type='text' name='date' class="flatpickr1" placeholder='Select date'>
                         </div>
                         {% endif %}
