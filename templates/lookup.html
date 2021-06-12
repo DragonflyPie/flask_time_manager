@@ -21,13 +21,11 @@ Task manager
                 <h5>{{ task.type.capitalize()}}</h5>
             </div>
             <div class="task">
-                <div>
-                    <p>{{ task.content }}</p>
-                </div>
+                <p>{{ task.content }}</p>
             </div>
             <div class="flex_row centered">
                 {% if task.date %}
-                <div class="">
+                <div class="padding_10">
                     <h6>{{ task.date }}</h6>
                 </div>
                 {% endif %}
@@ -68,7 +66,7 @@ Task manager
         {% if task.type == "task" %}
         <div class="flex_column column_small">
             <form action="{{ url_for('done', task_id = task.id) }}" method="POST">
-                <input class="btn " type="submit" value="Done">
+                <input class="btn done" type="submit" value="Done">
             </form>
         </div>
         {% endif %}
@@ -90,11 +88,11 @@ Task manager
                 </div>
                 <div class="flex_row centered">
                     {% if subtask.date %}
-                    <div class="">
+                    <div class="padding_10">
                         <h6>{{ subtask.date }}</h6>
                     </div>
                     {% else %}
-                    <div class="">
+                    <div class="padding_10">
                         <h6>{{ "Date is not set" }}</h6>
                     </div>
                     {% endif %}
@@ -135,7 +133,7 @@ Task manager
             </div>
             <div class="flex_column column_small">
                 <form action="{{ url_for('done', task_id = subtask.id) }}" method="POST">
-                    <input class="btn " type="submit" value="Done">
+                    <input class="btn done" type="submit" value="Done">
                 </form>
             </div>
         </div>
@@ -207,7 +205,7 @@ Task manager
         </div>
         <div class="flex_column column_small">
             <form action="{{ url_for('done', task_id = goal.id) }}" method="POST">
-                <input class="btn " type="submit" value="Done">
+                <input class="btn done" type="submit" value="Done">
             </form>
         </div>
     </div>
@@ -265,7 +263,7 @@ Task manager
         </div>
         <div class="flex_column column_small">
             <form action="{{ url_for('done', task_id = unsort.id) }}" method="POST">
-                <input class="btn task_element" type="submit" value="Done">
+                <input class="btn done" type="submit" value="Done">
             </form>
         </div>
     </div>
