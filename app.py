@@ -17,9 +17,7 @@ from datetime import date
 from sqlalchemy import or_
 
 
-
-
-# configure app, db
+# Configure app, db
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "720e9e855f1fd7b6f91668af1c4f5f37"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///plans.db"
@@ -38,8 +36,7 @@ def load_user(user_id):
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 
-
-# user table
+# User table
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
@@ -50,7 +47,8 @@ class User(db.Model, UserMixin):
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
 
-# task table
+
+# Task table
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
@@ -72,6 +70,8 @@ class Task(db.Model):
     def __repr__(self):
         return f"Task('{self.id}', '{self.user_id}', '{self.type}', {self.content}', {self.done})"
 
+
+# WTForm for Registration page
 class Registration_form(FlaskForm):
     username = StringField("Username", validators=[DataRequired(), Length(min=1, max=20)])
     email = StringField("Email", validators=[DataRequired(), Email('This e-mail adress is not valid')])
@@ -93,6 +93,7 @@ class Registration_form(FlaskForm):
             raise ValidationError("This email is already in use by existing user.")
 
 
+# WTForm for LogIN page
 class Login_form(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
@@ -100,6 +101,7 @@ class Login_form(FlaskForm):
     submit = SubmitField("Login")
 
 
+# WTForm for task
 class Objective_form(FlaskForm):
     content = TextAreaField("Objective", validators=[DataRequired("Doing nothing is not a plan!")])
     type = RadioField("Type:", id = "radioweek", choices=[('task', 'Task'), ('routine', 'Routine'), ('goal', 'Goal')], default = 'task')
@@ -112,30 +114,21 @@ class Objective_form(FlaskForm):
     sunday = BooleanField("Sunday", default="checked")
     submit = SubmitField("Submit")
 
-def apology(message, code=400):
-    return render_template("apology.html", message=message, code=code), code
 
+# Default page for unlogged user
 @app.route("/welcome")
 def welcome():
     return render_template('welcome.html')
 
-# index page
+
+# Redirects to lookup.html, setting chosen date as current day
 @app.route("/", methods=["GET", "POST"])
 def index():
     today = date.today()
     return redirect (url_for("lookup", searchdate = today))
-    if request.method == "POST":
-        searchdate = request.form["datepicker"]
-        return redirect(url_for("lookup", searchdate=searchdate))
-    else:
-        if not current_user.is_authenticated:
-            return redirect(url_for("welcome"))
-        today = date.today()
-        tasks = Task.query.filter_by(user_id=current_user.id, parent_id = None)
-        subtasks = Task.query.filter(Task.parent_id != None).filter_by(user_id=current_user.id)
-                    
-        return render_template("index.html", tasks=tasks, subtasks=subtasks)
 
+
+# Query database for objectives on certain date
 @app.route("/lookup/<searchdate>", methods=["GET", "POST"])
 @login_required
 def lookup(searchdate):
@@ -168,9 +161,7 @@ def lookup(searchdate):
         return render_template("lookup.html", subtasks=subtasks, all = all, tasks_and_routines=tasks_and_routines, unsorted=unsorted, goals=goals, date_dateformat=date_dateformat)
 
 
-
-
-# register page
+# Register
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if current_user.is_authenticated:
@@ -187,7 +178,7 @@ def register():
         return redirect(url_for("login"))
     return render_template("register.html", title="Register", form=form)
 
-
+# Log in
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
@@ -204,13 +195,13 @@ def login():
     return render_template("login.html", title="Login", form=form)
 
 
-
+# Log out of the current user
 @app.route("/logout")
 def logout():
     logout_user()
     return redirect(url_for("index"))
 
-
+# New objective
 @app.route("/new", methods=["GET", "POST"])
 @login_required
 def new_object():
@@ -238,7 +229,7 @@ def new_object():
     else:
         return render_template('new.html', title = "New objective", form=form, legend="What are we going to do?", parent_objective = None)
 
-
+# Add subobjective
 @app.route("/add/<int:task_id>", methods=["GET", "POST"])
 @login_required
 def new_subobjective(task_id):
@@ -267,7 +258,7 @@ def new_subobjective(task_id):
     else:
         return render_template('new.html', title = "New subobjective", form=form, legend="What are we going to do?", parent_objective = parent_objective)
 
-
+# Set "done" to True for this task
 @app.route("/done/<int:task_id>", methods =["POST"])
 @login_required
 def done(task_id):
@@ -279,7 +270,7 @@ def done(task_id):
     flash('Done', 'success')
     return redirect(url_for('index'))
 
-
+# Update page for chosen task
 @app.route("/update/<int:task_id>", methods=["GET", "POST"])
 @login_required
 def update(task_id):
@@ -314,7 +305,7 @@ def update(task_id):
         form.type.data = task.type
         return render_template('update.html', title = "Update", task=task, form=form, legend="Update task", parent_task=parent_task)
 
-
+# Remove chosen task from database
 @app.route("/delete/<int:task_id>", methods=["POST"])
 @login_required
 def delete(task_id):
@@ -325,17 +316,6 @@ def delete(task_id):
     db.session.commit()
     flash('Objective deleted', 'success')
     return redirect(url_for('index'))
-
-
-@app.route("/settings")
-@login_required
-def settings():
-    return render_template("settings.html", title="Account settings")
-
-
-@app.route("/apology")
-def apology():
-    pass
 
 
 if __name__ == "__main__":

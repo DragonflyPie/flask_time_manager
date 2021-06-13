@@ -1,3 +1,4 @@
+// changing form for new task depending on the chosen type
 let weekdays = () => {
   let week = document.getElementById("week_checkbox");
   let datepicker = document.getElementById("datepickr");
@@ -25,6 +26,7 @@ let weekdays = () => {
   });
 };
 
+// checking for type once on load
 function check() {
   let week = document.getElementById("week_checkbox");
   let datepicker = document.getElementById("datepickr");

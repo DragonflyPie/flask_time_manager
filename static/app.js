@@ -1,4 +1,7 @@
+// date and time pickers
+
 flatpickr(".flatpickr1", {
+  disableMobile: "true",
   allowInput: true,
   altInput: true,
   altFormat: "F j, Y",
@@ -8,6 +11,7 @@ flatpickr(".flatpickr1", {
 });
 
 flatpickr(".flatpickr2", {
+  disableMobile: "true",
   defaultDate: null,
   enableTime: false,
   dateFormat: "Y-m-d",
@@ -17,6 +21,7 @@ flatpickr(".flatpickr2", {
 });
 
 flatpickr(".flatpickr3", {
+  disableMobile: "true",
   allowInput: true,
   enableTime: true,
   noCalendar: true,

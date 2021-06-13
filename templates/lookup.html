@@ -233,15 +233,15 @@ Task manager
             </div>
             <div class="flex_row">
                 <form action="{{ url_for('update', task_id = unsort.id) }}">
-                    <input class="btn  mg_15" type="submit" value="Update">
+                    <input class="btn mg_15" type="submit" value="Update">
                 </form>
                 <form action="{{ url_for('new_subobjective', task_id = unsort.id) }}">
-                    <input class="btn  mg_15" type="submit" value="Subobjective">
+                    <input class="btn mg_15" type="submit" value="Subobjective">
                 </form>
-                <button type="button" class="btn  mg_15" data-bs-toggle="modal" data-bs-target="#unsort{{unsort.id}}">
+                <button type="button" class="btn mg_15" data-bs-toggle="modal" data-bs-target="#unsort{{unsort.id}}">
                     Delete
                 </button>
-                <div class="modal fade" id="unsort{{unsort.id}}"" tabindex=" -1" aria-labelledby="deleteModalLabel"
+                <div class="modal fade" id="unsort{{unsort.id}}" tabindex=" -1" aria-labelledby="deleteModalLabel"
                     aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">

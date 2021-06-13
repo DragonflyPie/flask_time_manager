@@ -1,10 +1,7 @@
 :root {
   --r1: hsl(262deg 20% 56%);
-  --g1: rgb(105, 158, 128);
-  --w1: hsla(37, 74%, 85%, 1);
-  --b1: hsla(192, 35%, 51%, 1);
-  --b2: hsla(203, 37%, 22%, 1);
   --r2: hsla(7, 70%, 72%);
+  --w1: hsla(37, 74%, 85%, 1);
   --black: hsl(8, 26%, 11%);
   --brown: hsl(7, 26%, 31%);
   --green: hsl(89, 11%, 45%);
@@ -24,11 +21,15 @@
   font-family: "Cairo", sans-serif;
   letter-spacing: 1px;
 }
+button {
+  min-width: 0;
+}
 
 html,
 body {
   min-height: 100vh;
   height: 100%;
+  overflow-x: hidden;
 }
 
 p {
@@ -145,6 +146,7 @@ main {
   justify-content: space-between;
   min-height: 150px;
   padding-left: 10px;
+  border-bottom: 1px solid var(--grey3);
 }
 
 .form-check {
@@ -157,7 +159,8 @@ main {
 textarea {
   min-height: 100px;
   color: black;
-  font-family: "Hind", sans-serif;
+  font-family: "Istok Web", sans-serif;
+  padding: 10px;
 }
 
 .loginform {
@@ -173,6 +176,7 @@ textarea {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  padding-right: 10px;
 }
 
 .form_list {
@@ -180,7 +184,6 @@ textarea {
   flex-direction: column;
   justify-content: space-evenly;
   width: 100px;
-  margin-left: 10px;
   height: 150px;
 }
 
@@ -225,7 +228,6 @@ legend {
   height: 50px;
   font-size: 20px;
   padding: 0px;
-  background-color: var(--b2);
 }
 
 .flatpickr2::placeholder {
@@ -270,7 +272,7 @@ legend {
 }
 
 .flex_row p {
-  font-size: 1.5em;
+  font-size: 1em;
 }
 
 .subtask_row {
@@ -316,7 +318,6 @@ legend {
 }
 
 .btn_login {
-  background-color: var(--r2);
   margin-top: 10px;
 }
 
@@ -339,7 +340,6 @@ legend {
 
 .column_small {
   justify-content: space-evenly;
-  width: 80px;
 }
 
 .btn {
@@ -378,9 +378,9 @@ legend {
 
 .task p {
   display: flex;
-  color: black;
+  color: var(--grey3);
   font-size: 1.5em;
-  font-family: "Hind", sans-serif;
+  font-family: "Istok Web", sans-serif;
   line-height: 1.3em;
   word-break: break-all;
 }
@@ -406,7 +406,9 @@ legend {
 }
 
 @media (max-width: 1025px) {
-  .task_wrapper {
+  .task_wrapper,
+  .header_top,
+  .new_form {
     width: 70%;
   }
   .nav_list {
@@ -415,7 +417,9 @@ legend {
 }
 
 @media (max-width: 769px) {
-  .task_wrapper {
+  .task_wrapper,
+  .header_top,
+  .new_form {
     width: 90%;
   }
   .nav_list {
@@ -423,5 +427,18 @@ legend {
   }
   .logo {
     display: none;
+  }
+}
+
+@media (max-width: 550px) {
+  .mg_15 {
+    margin: 5px;
+  }
+  .btn {
+    padding: 2px;
+  }
+
+  .done {
+    margin: 2px;
   }
 }
